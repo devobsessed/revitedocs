@@ -1,0 +1,162 @@
+/**
+ * ReviteDocs Default Theme
+ * 
+ * CSS Variables for colors, typography, layout, and border radius.
+ * Override these variables in your custom CSS to customize the theme.
+ * 
+ * Colors use HSL values without the hsl() wrapper for flexibility:
+ *   --rd-color-primary: 220 90% 56%;
+ *   Usage: hsl(var(--rd-color-primary))
+ */
+
+/* ============================================================================
+   Light Mode (Default)
+   ============================================================================ */
+
+:root {
+  /* Core Colors */
+  --rd-color-primary: 220 90% 56%;
+  --rd-color-primary-foreground: 0 0% 100%;
+  --rd-color-background: 0 0% 100%;
+  --rd-color-foreground: 224 71% 4%;
+  --rd-color-muted: 220 14% 96%;
+  --rd-color-muted-foreground: 220 9% 46%;
+  --rd-color-border: 220 13% 91%;
+  --rd-color-accent: 220 14% 96%;
+  --rd-color-accent-foreground: 224 71% 4%;
+  
+  /* Semantic Colors */
+  --rd-color-info: 199 89% 48%;
+  --rd-color-info-foreground: 0 0% 100%;
+  --rd-color-warning: 38 92% 50%;
+  --rd-color-warning-foreground: 0 0% 100%;
+  --rd-color-error: 0 84% 60%;
+  --rd-color-error-foreground: 0 0% 100%;
+  --rd-color-success: 142 71% 45%;
+  --rd-color-success-foreground: 0 0% 100%;
+  
+  /* Sidebar */
+  --rd-color-sidebar-bg: 0 0% 98%;
+  --rd-color-sidebar-fg: 224 71% 4%;
+  --rd-color-sidebar-border: 220 13% 91%;
+  
+  /* Header */
+  --rd-color-header-bg: 0 0% 100%;
+  --rd-color-header-fg: 224 71% 4%;
+  --rd-color-header-border: 220 13% 91%;
+  
+  /* Code Blocks */
+  --rd-color-code-bg: 220 14% 96%;
+  --rd-color-code-fg: 224 71% 4%;
+  
+  /* Layout */
+  --rd-sidebar-width: 280px;
+  --rd-toc-width: 224px;
+  --rd-content-max-width: 800px;
+  --rd-header-height: 64px;
+  
+  /* Typography */
+  --rd-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --rd-font-size-base: 16px;
+  --rd-font-size-sm: 14px;
+  --rd-font-size-lg: 18px;
+  --rd-line-height-base: 1.7;
+  
+  /* Border Radius */
+  --rd-radius-sm: 0.25rem;
+  --rd-radius-md: 0.5rem;
+  --rd-radius-lg: 0.75rem;
+}
+
+/* ============================================================================
+   Dark Mode
+   ============================================================================ */
+
+.dark {
+  /* Core Colors */
+  --rd-color-primary: 217 91% 60%;
+  --rd-color-primary-foreground: 0 0% 100%;
+  --rd-color-background: 224 71% 4%;
+  --rd-color-foreground: 213 31% 91%;
+  --rd-color-muted: 223 47% 11%;
+  --rd-color-muted-foreground: 215 20% 65%;
+  --rd-color-border: 216 34% 17%;
+  --rd-color-accent: 216 34% 17%;
+  --rd-color-accent-foreground: 213 31% 91%;
+  
+  /* Semantic Colors (consistent in dark mode for visibility) */
+  --rd-color-info: 199 89% 48%;
+  --rd-color-info-foreground: 0 0% 100%;
+  --rd-color-warning: 38 92% 50%;
+  --rd-color-warning-foreground: 0 0% 100%;
+  --rd-color-error: 0 84% 60%;
+  --rd-color-error-foreground: 0 0% 100%;
+  --rd-color-success: 142 71% 45%;
+  --rd-color-success-foreground: 0 0% 100%;
+  
+  /* Sidebar */
+  --rd-color-sidebar-bg: 224 71% 4%;
+  --rd-color-sidebar-fg: 213 31% 91%;
+  --rd-color-sidebar-border: 216 34% 17%;
+  
+  /* Header */
+  --rd-color-header-bg: 224 71% 4%;
+  --rd-color-header-fg: 213 31% 91%;
+  --rd-color-header-border: 216 34% 17%;
+  
+  /* Code Blocks */
+  --rd-color-code-bg: 223 47% 11%;
+  --rd-color-code-fg: 213 31% 91%;
+}
+
+/* ============================================================================
+   Base Styles using CSS Variables
+   ============================================================================ */
+
+html {
+  font-family: var(--rd-font-sans);
+  font-size: var(--rd-font-size-base);
+  line-height: var(--rd-line-height-base);
+}
+
+body {
+  background-color: hsl(var(--rd-color-background));
+  color: hsl(var(--rd-color-foreground));
+}
+
+/* Code elements */
+code, pre, kbd, samp {
+  font-family: var(--rd-font-mono);
+}
+
+/* Focus styles using primary color */
+:focus-visible {
+  outline: 2px solid hsl(var(--rd-color-primary));
+  outline-offset: 2px;
+}
+
+/* Selection using primary color */
+::selection {
+  background-color: hsl(var(--rd-color-primary) / 0.2);
+}
+
+/* Scrollbar styling (WebKit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--rd-color-muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--rd-color-muted-foreground) / 0.3);
+  border-radius: var(--rd-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--rd-color-muted-foreground) / 0.5);
+}
+

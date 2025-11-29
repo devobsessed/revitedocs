@@ -1,0 +1,14 @@
+{
+  "name": "revitedocs-docs",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "revitedocs dev",
+    "build": "revitedocs build",
+    "preview": "revitedocs preview"
+  },
+  "dependencies": {
+    "revitedocs": "file:../packages/revitedocs"
+  }
+}
