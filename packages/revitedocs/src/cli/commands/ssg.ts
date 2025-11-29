@@ -833,6 +833,89 @@ function createHtmlPage(
 }
 
 /**
+ * Create 404 error page HTML
+ */
+function create404Page(
+  config: ResolvedConfig,
+  clientScripts: string[],
+  clientStyles: string[],
+  base: string
+): string {
+  const title = `Page Not Found | ${config.title}`;
+  const description = "The page you're looking for doesn't exist.";
+
+  // Normalize base
+  const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
+
+  const scriptTags = clientScripts
+    .map((src) => {
+      const normalizedSrc = src.startsWith("/") ? src : "/" + src;
+      return `<script type="module" src="${normalizedBase}${normalizedSrc}"></script>`;
+    })
+    .join("\n    ");
+
+  const styleTags = clientStyles
+    .map((href) => {
+      const normalizedHref = href.startsWith("/") ? href : "/" + href;
+      return `<link rel="stylesheet" href="${normalizedBase}${normalizedHref}">`;
+    })
+    .join("\n    ");
+
+  const themeScript = `<script>
+(function() {
+  var theme = localStorage.getItem('revitedocs-theme');
+  if (!theme) {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+})();
+</script>`;
+
+  const notFoundContent = `
+    <div class="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+      <header class="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur">
+        <div class="flex h-14 items-center px-4 md:px-6">
+          <a href="${normalizedBase}/" class="flex items-center gap-2">
+            <div class="h-8 w-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold">
+              ${config.title?.[0] || "D"}
+            </div>
+            <span class="font-semibold hidden sm:inline">${config.title || "Documentation"}</span>
+          </a>
+        </div>
+      </header>
+      <main class="flex items-center justify-center" style="min-height: calc(100vh - 3.5rem);">
+        <div class="text-center p-8">
+          <h1 class="text-6xl font-bold text-zinc-300 dark:text-zinc-700 mb-4">404</h1>
+          <h2 class="text-2xl font-semibold mb-2">Page Not Found</h2>
+          <p class="text-zinc-500 dark:text-zinc-400 mb-6">The page you're looking for doesn't exist or has been moved.</p>
+          <a href="${normalizedBase}/" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 h-10 px-4 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors">
+            Go to Homepage
+          </a>
+        </div>
+      </main>
+    </div>`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <meta name="description" content="${description}">
+    <meta name="robots" content="noindex">
+    ${styleTags}
+    ${themeScript}
+  </head>
+  <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <div id="app">${notFoundContent}</div>
+    ${scriptTags}
+  </body>
+</html>`;
+}
+
+/**
  * Build SSG - pre-render all routes to static HTML
  */
 export async function buildSSG(
@@ -1046,7 +1129,14 @@ export async function buildSSG(
 
     console.log(pc.green(`  ✓ Pre-rendered ${renderedCount} pages`));
 
-    // Step 4: Clean up server bundle
+    // Step 4: Generate 404 page
+    console.log(pc.dim("  Generating 404 page..."));
+    const notFoundHtml = create404Page(config, clientScripts, clientStyles, base);
+    const notFoundPath = path.join(distPath, "404.html");
+    fs.writeFileSync(notFoundPath, notFoundHtml);
+    console.log(pc.green("  ✓ 404 page generated"));
+
+    // Step 5: Clean up server bundle
     console.log(pc.dim("  Cleaning up..."));
     fs.rmSync(distServerPath, { recursive: true, force: true });
     console.log(pc.green("  ✓ Cleanup complete"));

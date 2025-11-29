@@ -14,7 +14,7 @@ export default defineConfig({
 
   theme: {
     nav: [
-      { text: "Guide", link: "/guide/getting-started" },
+      { text: "Guide", link: "/guide/configuration" },
       { text: "API", link: "/api/cli" },
       { text: "GitHub", link: "https://github.com/devobsessed/revitedocs" },
     ],
