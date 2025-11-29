@@ -84,26 +84,133 @@ function writeCssEntry(revitedocsDir: string): string {
 /* Enable class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Prose styles for markdown content */
-.prose h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
-.prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
-.prose h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+/* ============================================================================
+   shadcn/ui CSS Variables
+   ============================================================================ */
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 4%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 4%;
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 4%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 4%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 9%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 18%;
+  --input: 0 0% 18%;
+  --ring: 0 0% 83%;
+}
+
+/* ============================================================================
+   shadcn/ui Utility Classes
+   ============================================================================ */
+
+/* Background utilities */
+.bg-background { background-color: hsl(var(--background)); }
+.bg-foreground { background-color: hsl(var(--foreground)); }
+.bg-card { background-color: hsl(var(--card)); }
+.bg-popover { background-color: hsl(var(--popover)); }
+.bg-primary { background-color: hsl(var(--primary)); }
+.bg-secondary { background-color: hsl(var(--secondary)); }
+.bg-muted { background-color: hsl(var(--muted)); }
+.bg-accent { background-color: hsl(var(--accent)); }
+.bg-destructive { background-color: hsl(var(--destructive)); }
+
+.bg-background\\/60 { background-color: hsl(var(--background) / 0.6); }
+.bg-background\\/80 { background-color: hsl(var(--background) / 0.8); }
+.bg-background\\/95 { background-color: hsl(var(--background) / 0.95); }
+.bg-primary\\/10 { background-color: hsl(var(--primary) / 0.1); }
+.bg-primary\\/20 { background-color: hsl(var(--primary) / 0.2); }
+
+/* Text utilities */
+.text-foreground { color: hsl(var(--foreground)); }
+.text-background { color: hsl(var(--background)); }
+.text-card-foreground { color: hsl(var(--card-foreground)); }
+.text-popover-foreground { color: hsl(var(--popover-foreground)); }
+.text-primary { color: hsl(var(--primary)); }
+.text-primary-foreground { color: hsl(var(--primary-foreground)); }
+.text-secondary-foreground { color: hsl(var(--secondary-foreground)); }
+.text-muted-foreground { color: hsl(var(--muted-foreground)); }
+.text-accent-foreground { color: hsl(var(--accent-foreground)); }
+.text-destructive { color: hsl(var(--destructive)); }
+.text-destructive-foreground { color: hsl(var(--destructive-foreground)); }
+
+/* Border utilities */
+.border-border { border-color: hsl(var(--border)); }
+.border-input { border-color: hsl(var(--input)); }
+.border-primary { border-color: hsl(var(--primary)); }
+.border-destructive { border-color: hsl(var(--destructive)); }
+
+/* Ring utilities */
+.ring-ring { --tw-ring-color: hsl(var(--ring)); }
+.ring-offset-background { --tw-ring-offset-color: hsl(var(--background)); }
+
+/* Hover states */
+.hover\\:bg-accent:hover { background-color: hsl(var(--accent)); }
+.hover\\:bg-muted:hover { background-color: hsl(var(--muted)); }
+.hover\\:bg-primary:hover { background-color: hsl(var(--primary)); }
+.hover\\:bg-secondary:hover { background-color: hsl(var(--secondary)); }
+.hover\\:bg-destructive:hover { background-color: hsl(var(--destructive)); }
+.hover\\:text-foreground:hover { color: hsl(var(--foreground)); }
+.hover\\:text-accent-foreground:hover { color: hsl(var(--accent-foreground)); }
+.hover\\:text-primary:hover { color: hsl(var(--primary)); }
+
+/* Focus states */
+.focus\\:ring-ring:focus { --tw-ring-color: hsl(var(--ring)); }
+.focus-visible\\:ring-ring:focus-visible { --tw-ring-color: hsl(var(--ring)); }
+
+/* Data state variants (for Radix UI) */
+[data-state="open"].data-\\[state\\=open\\]\\:bg-accent { background-color: hsl(var(--accent)); }
+[data-state="open"].data-\\[state\\=open\\]\\:text-muted-foreground { color: hsl(var(--muted-foreground)); }
+
+/* ============================================================================
+   Prose styles for markdown content 
+   ============================================================================ */
+.prose h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; color: hsl(var(--foreground)); }
+.prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem; border-bottom: 1px solid hsl(var(--border)); padding-bottom: 0.5rem; color: hsl(var(--foreground)); }
+.prose h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: hsl(var(--foreground)); }
 .prose p { margin-bottom: 1rem; line-height: 1.7; }
-.prose pre { background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
+.prose pre { background: hsl(var(--muted)); color: hsl(var(--foreground)); padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
 .prose code { font-family: ui-monospace, monospace; font-size: 0.875rem; }
 .prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
 .prose ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
 .prose li { margin-bottom: 0.25rem; }
-.prose a { color: #3b82f6; }
+.prose a { color: hsl(var(--primary)); }
 .prose a:hover { text-decoration: underline; }
 .prose strong { font-weight: 600; }
-.prose blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; color: #6b7280; margin: 1rem 0; }
-
-/* Dark mode prose styles */
-.dark .prose h2 { border-color: #374151; }
-.dark .prose pre { background: #111827; }
-.dark .prose a { color: #60a5fa; }
-.dark .prose blockquote { border-color: #60a5fa; color: #9ca3af; }
+.prose blockquote { border-left: 4px solid hsl(var(--primary)); padding-left: 1rem; color: hsl(var(--muted-foreground)); margin: 1rem 0; }
 `;
   const cssPath = path.join(revitedocsDir, "styles.css");
   fs.writeFileSync(cssPath, cssContent);
