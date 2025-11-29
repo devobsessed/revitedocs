@@ -86,7 +86,7 @@ describe('config', () => {
       const { loadConfigFromFile } = await import('vite')
       vi.mocked(loadConfigFromFile).mockResolvedValue({
         path: '/root/.revitedocs/config.ts',
-        config: { title: 'Loaded Docs' },
+        config: { title: 'Loaded Docs' } as any,
         dependencies: [],
       })
 

@@ -52,7 +52,7 @@ async function generateLlmsRoutes(rootDir: string): Promise<LlmsRoute[]> {
 
 export async function build(root: string, options: BuildOptions): Promise<void> {
   const resolvedRoot = path.resolve(root)
-  const outDir = options.outDir ?? 'dist'
+  const outDir = options.outDir ?? '.revitedocs/dist'
   const base = options.base ?? '/'
   
   console.log(pc.bold(`\n🚀 Building for production in ${resolvedRoot}...`))

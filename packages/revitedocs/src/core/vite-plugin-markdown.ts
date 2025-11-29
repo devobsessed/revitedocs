@@ -114,7 +114,7 @@ function createContainerJsx(
   type: string,
   title: string | undefined,
   _content: Root['children']
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
 ): any {
   // Callout types
   if (['info', 'warning', 'tip', 'danger', 'note'].includes(type)) {
@@ -142,7 +142,7 @@ function remarkMermaid() {
     for (const node of tree.children) {
       if (node.type === 'code' && (node.lang === 'mermaid' || node.lang === 'mmd')) {
         const codeNode = node as Code
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         newChildren.push({
           type: 'mdxJsxFlowElement',
           name: 'MermaidDiagram',

@@ -30,7 +30,8 @@ program
 program
   .command('preview [root]', 'Preview production build')
   .option('--port <port>', 'Port number', { default: 4173 })
-  .action(async (root: string | undefined, options: { port: number }) => {
+  .option('--outDir <dir>', 'Output directory to preview')
+  .action(async (root: string | undefined, options: { port: number; outDir?: string }) => {
     const { preview } = await import('./commands/preview.js')
     await preview(root || '.', options)
   })

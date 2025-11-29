@@ -92,7 +92,7 @@ export async function generateLlmsFull(config: ResolvedConfig, routes: LlmsRoute
         content.trim(),
         ''
       )
-    } catch (error) {
+    } catch {
       // Skip files that can't be read
       console.warn(`Warning: Could not read ${route.file}`)
     }

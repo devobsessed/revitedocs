@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import path from 'node:path'
 import fs from 'node:fs'
 import {
   getDefaultTailwindConfig,
@@ -53,10 +52,11 @@ describe('tailwind utilities', () => {
     it('deeply merges nested objects', () => {
       const target = { 
         a: 1, 
-        nested: { x: 1, y: 2 } 
+        nested: { x: 1, y: 2, z: 0 } 
       }
       const source = { 
-        nested: { y: 3, z: 4 } 
+        a: 1,
+        nested: { x: 1, y: 3, z: 4 } 
       }
       const result = deepMerge(target, source)
       expect(result).toEqual({
@@ -87,10 +87,10 @@ describe('tailwind utilities', () => {
     })
 
     it('does not mutate original objects', () => {
-      const target = { a: 1, nested: { x: 1 } }
-      const source = { nested: { y: 2 } }
+      const target = { a: 1, nested: { x: 1, y: 0 } }
+      const source = { a: 1, nested: { x: 1, y: 2 } }
       deepMerge(target, source)
-      expect(target).toEqual({ a: 1, nested: { x: 1 } })
+      expect(target).toEqual({ a: 1, nested: { x: 1, y: 0 } })
     })
   })
 

@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { createRequire } from 'node:module'
 import { build as viteBuild, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import mdx from '@mdx-js/rollup'
@@ -12,6 +13,33 @@ import { generateRoutes, type Route } from '../../core/router.js'
 import { remarkContainerDirectives, remarkMermaid } from '../../core/remark-plugins.js'
 import { revitedocsRoutesPlugin } from '../../core/vite-plugin-routes.js'
 import { revitedocsConfigPlugin } from '../../core/vite-plugin.js'
+
+// Create require to resolve dependencies from revitedocs's location
+const require = createRequire(import.meta.url)
+
+/**
+ * Resolve a dependency path using Node's resolution algorithm
+ * Works regardless of npm hoisting behavior
+ */
+function resolveDep(dep: string): string {
+  try {
+    // Use require.resolve to get the actual path where the package is installed
+    // Then get the package directory by locating node_modules/package-name
+    const resolved = require.resolve(dep)
+    const nodeModulesIndex = resolved.lastIndexOf('node_modules')
+    if (nodeModulesIndex === -1) {
+      return resolved
+    }
+    // Get everything up to and including the package name (handles scoped packages too)
+    const afterNodeModules = resolved.slice(nodeModulesIndex + 'node_modules/'.length)
+    const packageName = afterNodeModules.startsWith('@') 
+      ? afterNodeModules.split('/').slice(0, 2).join('/')
+      : afterNodeModules.split('/')[0]
+    return resolved.slice(0, nodeModulesIndex + 'node_modules/'.length) + packageName
+  } catch {
+    return dep // Fall back to bare specifier if resolution fails
+  }
+}
 
 export interface SSGOptions {
   outDir: string
@@ -677,19 +705,19 @@ export async function buildSSG(
 ): Promise<void> {
   const { outDir, base = '/' } = options
   const distPath = path.join(rootDir, outDir)
-  const distServerPath = path.join(rootDir, '.revitedocs-server')
+  // Server bundle goes inside .revitedocs for building
+  const revitedocsDir = path.join(rootDir, '.revitedocs')
+  const distServerPath = path.join(revitedocsDir, 'server')
 
   console.log(pc.cyan('\n📦 Building SSG...'))
 
-  // Backup original index.html if it exists
-  const indexPath = path.join(rootDir, 'index.html')
-  const originalIndexExists = fs.existsSync(indexPath)
-  let originalIndexContent: string | null = null
-  if (originalIndexExists) {
-    originalIndexContent = fs.readFileSync(indexPath, 'utf-8')
+  // Create .revitedocs directory for build artifacts
+  if (!fs.existsSync(revitedocsDir)) {
+    fs.mkdirSync(revitedocsDir, { recursive: true })
   }
   
-  // Write build index.html
+  // Write build index.html in .revitedocs folder
+  const indexPath = path.join(revitedocsDir, 'index.html')
   const buildIndexHtml = createBuildIndexHtml(config.title)
   fs.writeFileSync(indexPath, buildIndexHtml)
 
@@ -697,7 +725,7 @@ export async function buildSSG(
     // Step 1: Build client bundle
     console.log(pc.dim('  Building client bundle...'))
     await viteBuild({
-      root: rootDir,
+      root: revitedocsDir,
       base,
       plugins: [
         {
@@ -720,7 +748,8 @@ export async function buildSSG(
         createBuildSearchPlugin(),
       ],
       build: {
-        outDir,
+        // outDir is relative to rootDir (e.g., .revitedocs/dist), convert to relative from revitedocsDir
+        outDir: path.relative(revitedocsDir, distPath),
         ssrManifest: true,
         emptyOutDir: true,
       },
@@ -730,6 +759,12 @@ export async function buildSSG(
       },
       resolve: {
         dedupe: ['react', 'react-dom', '@mdx-js/react'],
+        alias: {
+          'react': resolveDep('react'),
+          'react-dom': resolveDep('react-dom'),
+          '@mdx-js/react': resolveDep('@mdx-js/react'),
+          'mermaid': resolveDep('mermaid'),
+        },
       },
     })
     console.log(pc.green('  ✓ Client bundle built'))
@@ -741,7 +776,7 @@ export async function buildSSG(
     const serverEntryPlugin = createServerEntryPlugin()
     
     await viteBuild({
-      root: rootDir,
+      root: revitedocsDir,
       base,
       plugins: [
         // Server entry plugin must come first to resolve the virtual entry
@@ -768,7 +803,7 @@ export async function buildSSG(
         createSSRSearchPlugin(),
       ],
       build: {
-        outDir: '.revitedocs-server',
+        outDir: 'server',
         ssr: true,
         emptyOutDir: true,
         rollupOptions: {
@@ -781,6 +816,15 @@ export async function buildSSG(
         },
       },
       logLevel: 'warn',
+      resolve: {
+        dedupe: ['react', 'react-dom', '@mdx-js/react'],
+        alias: {
+          'react': resolveDep('react'),
+          'react-dom': resolveDep('react-dom'),
+          '@mdx-js/react': resolveDep('@mdx-js/react'),
+          'mermaid': resolveDep('mermaid'),
+        },
+      },
       ssr: {
         // Don't externalize revitedocs components - we need them bundled
         noExternal: ['revitedocs'],
@@ -857,14 +901,10 @@ export async function buildSSG(
     fs.rmSync(distServerPath, { recursive: true, force: true })
     console.log(pc.green('  ✓ Cleanup complete'))
   } finally {
-    // Restore original index.html or remove the build one
-    if (originalIndexContent !== null) {
-      fs.writeFileSync(indexPath, originalIndexContent)
-    } else if (!originalIndexExists) {
-      try {
-        fs.unlinkSync(indexPath)
-      } catch {}
-    }
+    // Remove the temporary build index.html from .revitedocs
+    try {
+      fs.unlinkSync(indexPath)
+    } catch { /* ignore cleanup errors */ }
   }
 }
 

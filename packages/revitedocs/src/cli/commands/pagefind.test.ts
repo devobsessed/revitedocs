@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import fs from 'node:fs'
-import path from 'node:path'
 
 // Mock child_process
 vi.mock('node:child_process', () => ({
@@ -48,7 +47,6 @@ describe('pagefind integration', () => {
 
     it('runs pagefind command with correct arguments', async () => {
       const { exec } = await import('node:child_process')
-      const { promisify } = await import('node:util')
 
       // Setup mocks
       vi.mocked(fs.existsSync).mockImplementation((p) => {
@@ -60,7 +58,7 @@ describe('pagefind integration', () => {
       ] as any)
 
       // Mock exec to succeed
-      vi.mocked(exec).mockImplementation((cmd, opts, callback) => {
+      vi.mocked(exec).mockImplementation((_cmd, _opts, callback) => {
         if (callback) {
           callback(null, { stdout: 'Success', stderr: '' } as any, '')
         }
@@ -73,7 +71,7 @@ describe('pagefind integration', () => {
 
       // Note: This test verifies the function structure, but full integration
       // requires actual Pagefind installation
-      const result = await runPagefind({ site: '/test/dist' })
+      await runPagefind({ site: '/test/dist' })
 
       // Should have called fs.existsSync for the site directory
       expect(fs.existsSync).toHaveBeenCalledWith('/test/dist')
@@ -88,7 +86,7 @@ describe('pagefind integration', () => {
       ] as any)
 
       const { exec } = await import('node:child_process')
-      vi.mocked(exec).mockImplementation((cmd, opts, callback) => {
+      vi.mocked(exec).mockImplementation((cmd, _opts, callback) => {
         // Verify custom output subdirectory is used
         expect(cmd).toContain('--output-subdir')
         expect(cmd).toContain('search-index')

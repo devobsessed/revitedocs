@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 describe('search exports', () => {
   it('exports SearchModal component', async () => {
@@ -23,9 +23,9 @@ describe('search exports', () => {
 describe('search types', () => {
   it('exports SearchResult type', async () => {
     // Type check - if this compiles, the type is exported correctly
-    const module = await import('./index.js')
-    type TestResult = Parameters<typeof module.SearchModal>[0]
-    expect(true).toBe(true)
+    const { SearchModal } = await import('./index.js')
+    // Verify SearchModal accepts props (type check)
+    expect(typeof SearchModal).toBe('function')
   })
 })
 

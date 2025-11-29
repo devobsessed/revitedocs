@@ -65,7 +65,7 @@ describe('build command', () => {
       expect(buildSSG).toHaveBeenCalledWith(
         '/test/root',
         expect.objectContaining({ title: 'Test Docs' }),
-        expect.objectContaining({ outDir: 'dist', base: '/' })
+        expect.objectContaining({ outDir: '.revitedocs/dist', base: '/' })
       )
     })
 
@@ -132,7 +132,7 @@ describe('build command', () => {
       expect(generateSitemap).toHaveBeenCalledWith(
         '/test/root',
         expect.anything(),
-        'dist',
+        '.revitedocs/dist',
         undefined
       )
     })
@@ -159,7 +159,7 @@ describe('build command', () => {
       await build('/test/root', { skipSitemap: true })
 
       expect(runPagefind).toHaveBeenCalledWith({
-        site: '/test/root/dist',
+        site: '/test/root/.revitedocs/dist',
       })
     })
 

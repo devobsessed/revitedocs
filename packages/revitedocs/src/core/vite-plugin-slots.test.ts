@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { revitedocsSlotsPlugin, resolveThemeSlot, SLOT_COMPONENTS } from './vite-plugin-slots.js'
 import type { ResolvedConfig } from './config.js'
-import path from 'node:path'
 import fs from 'node:fs'
 
 // Mock fs module

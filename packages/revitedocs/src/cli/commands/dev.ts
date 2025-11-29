@@ -2,6 +2,7 @@ import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { createServer, type Plugin } from "vite";
 import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
@@ -11,6 +12,9 @@ import { remarkContainerDirectives, remarkMermaid } from "../../core/remark-plug
 import { revitedocsRoutesPlugin } from "../../core/vite-plugin-routes.js";
 import { revitedocsConfigPlugin } from "../../core/vite-plugin.js";
 import { revitedocsSearchPlugin } from "../../core/vite-plugin-search.js";
+
+// Create require to resolve dependencies from revitedocs's location
+const require = createRequire(import.meta.url);
 
 export interface DevOptions {
   port: number;
@@ -419,9 +423,28 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
   const indexHtml = createIndexHtml(config.title);
   fs.writeFileSync(indexPath, indexHtml);
 
-  // Get the path to revitedocs node_modules for dependency resolution
-  const revitedocsDir = path.dirname(path.dirname(new URL(import.meta.url).pathname));
-  const revitedocsNodeModules = path.join(revitedocsDir, 'node_modules');
+  // Resolve dependencies from revitedocs's installation location using Node's resolution
+  // This works regardless of npm hoisting behavior
+  const resolveDep = (dep: string) => {
+    try {
+      // Use require.resolve to get the actual path where the package is installed
+      // Then get the package directory by going up from the resolved entry point
+      const resolved = require.resolve(dep);
+      // Find the package root by locating node_modules/package-name
+      const nodeModulesIndex = resolved.lastIndexOf('node_modules');
+      if (nodeModulesIndex === -1) {
+        return resolved;
+      }
+      // Get everything up to and including the package name (handles scoped packages too)
+      const afterNodeModules = resolved.slice(nodeModulesIndex + 'node_modules/'.length);
+      const packageName = afterNodeModules.startsWith('@') 
+        ? afterNodeModules.split('/').slice(0, 2).join('/')
+        : afterNodeModules.split('/')[0];
+      return resolved.slice(0, nodeModulesIndex + 'node_modules/'.length) + packageName;
+    } catch {
+      return dep; // Fall back to bare specifier if resolution fails
+    }
+  };
   
   const server = await createServer({
     root: resolvedRoot,
@@ -457,11 +480,11 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
     resolve: {
       dedupe: ["react", "react-dom", "@mdx-js/react", "mermaid"],
       alias: {
-        // Resolve React and other deps from revitedocs's node_modules
-        'react': path.join(revitedocsNodeModules, 'react'),
-        'react-dom': path.join(revitedocsNodeModules, 'react-dom'),
-        '@mdx-js/react': path.join(revitedocsNodeModules, '@mdx-js/react'),
-        'mermaid': path.join(revitedocsNodeModules, 'mermaid'),
+        // Resolve React and other deps from revitedocs's installation using Node resolution
+        'react': resolveDep('react'),
+        'react-dom': resolveDep('react-dom'),
+        '@mdx-js/react': resolveDep('@mdx-js/react'),
+        'mermaid': resolveDep('mermaid'),
       },
     },
   });
@@ -473,7 +496,7 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
   process.on("SIGINT", () => {
     try {
       fs.unlinkSync(indexPath);
-    } catch {}
+    } catch { /* ignore cleanup errors */ }
     process.exit();
   });
 }

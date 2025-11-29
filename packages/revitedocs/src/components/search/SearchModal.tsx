@@ -107,7 +107,7 @@ export function SearchModal({
         const results = await searchDocs(state.query, maxResults)
         setState((prev) => ({ ...prev, results, isLoading: false }))
         setSelectedIndex(0)
-      } catch (error) {
+      } catch {
         setState((prev) => ({
           ...prev,
           isLoading: false,
