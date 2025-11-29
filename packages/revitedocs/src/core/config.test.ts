@@ -19,7 +19,7 @@ describe('config', () => {
   describe('resolveConfig', () => {
     it('applies defaults to empty config', () => {
       const resolved = resolveConfig('/root', {})
-      
+
       expect(resolved.root).toBe('/root')
       expect(resolved.title).toBe('Documentation')
       expect(resolved.base).toBe('/')
@@ -146,4 +146,3 @@ describe('config', () => {
     })
   })
 })
-

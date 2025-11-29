@@ -110,18 +110,22 @@ function TreeNode({ item, depth }: TreeNodeProps) {
         {/* Icon */}
         {isFolder ? (
           expanded ? (
-            <FolderOpen className="h-4 w-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0" aria-hidden="true" />
+            <FolderOpen
+              className="h-4 w-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0"
+              aria-hidden="true"
+            />
           ) : (
-            <Folder className="h-4 w-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0" aria-hidden="true" />
+            <Folder
+              className="h-4 w-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0"
+              aria-hidden="true"
+            />
           )
         ) : (
           <File className="h-4 w-4 text-zinc-400 flex-shrink-0" aria-hidden="true" />
         )}
 
         {/* Name */}
-        <span className={cn('truncate', isFolder && 'font-medium')}>
-          {item.name}
-        </span>
+        <span className={cn('truncate', isFolder && 'font-medium')}>{item.name}</span>
       </div>
 
       {/* Children */}
@@ -141,9 +145,10 @@ function TreeNode({ item, depth }: TreeNodeProps) {
  */
 export function FileTree({ items, className }: FileTreeProps) {
   // Parse string format if provided
-  const treeItems: FileTreeItem[] = Array.isArray(items) && typeof items[0] === 'string'
-    ? parseFileTreeStrings(items as string[])
-    : (items as FileTreeItem[])
+  const treeItems: FileTreeItem[] =
+    Array.isArray(items) && typeof items[0] === 'string'
+      ? parseFileTreeStrings(items as string[])
+      : (items as FileTreeItem[])
 
   return (
     <div
@@ -161,4 +166,3 @@ export function FileTree({ items, className }: FileTreeProps) {
     </div>
   )
 }
-

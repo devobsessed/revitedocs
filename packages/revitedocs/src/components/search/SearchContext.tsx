@@ -26,7 +26,7 @@ export function SearchProvider({ children, onNavigate }: SearchProviderProps) {
         event.preventDefault()
         setIsOpen((prev) => !prev)
       }
-      
+
       // Also support Escape to close
       if (event.key === 'Escape' && isOpen) {
         event.preventDefault()
@@ -53,11 +53,7 @@ export function SearchProvider({ children, onNavigate }: SearchProviderProps) {
   return (
     <SearchContext.Provider value={value}>
       {children}
-      <SearchModal
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        onNavigate={onNavigate}
-      />
+      <SearchModal open={isOpen} onOpenChange={setIsOpen} onNavigate={onNavigate} />
     </SearchContext.Provider>
   )
 }
@@ -67,7 +63,7 @@ export function SearchProvider({ children, onNavigate }: SearchProviderProps) {
  */
 export function useSearch(): SearchContextValue {
   const context = useContext(SearchContext)
-  
+
   if (!context) {
     // Return a stub if used outside provider
     return {
@@ -78,7 +74,6 @@ export function useSearch(): SearchContextValue {
       isOpen: false,
     }
   }
-  
+
   return context
 }
-

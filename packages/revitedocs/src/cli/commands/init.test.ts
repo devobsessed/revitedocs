@@ -43,7 +43,7 @@ describe('init command', () => {
     it('should generate valid TypeScript config content', () => {
       const title = 'Test Docs'
       const description = 'Test description'
-      
+
       const expectedContent = `import { defineConfig } from 'revitedocs'
 
 export default defineConfig({
@@ -67,7 +67,7 @@ export default defineConfig({
   },
 })
 `
-      
+
       expect(expectedContent).toContain("import { defineConfig } from 'revitedocs'")
       expect(expectedContent).toContain(`title: '${title}'`)
       expect(expectedContent).toContain(`description: '${description}'`)
@@ -79,7 +79,7 @@ export default defineConfig({
     it('should generate valid JavaScript config content', () => {
       const title = 'Test Docs'
       const description = 'Test description'
-      
+
       const expectedContent = `export default {
   title: '${title}',
   description: '${description}',
@@ -101,7 +101,7 @@ export default defineConfig({
   },
 }
 `
-      
+
       expect(expectedContent).not.toContain('import')
       expect(expectedContent).toContain(`title: '${title}'`)
       expect(expectedContent).toContain(`description: '${description}'`)
@@ -113,7 +113,7 @@ export default defineConfig({
       const title = 'Test Docs'
       const description = 'Test description'
       const docsDir = './docs'
-      
+
       const expectedContent = `---
 title: ${title}
 description: ${description}
@@ -139,7 +139,7 @@ Edit this file at \`${docsDir}/index.md\` to get started.
 
 Check out the [ReviteDocs documentation](https://github.com) to learn more.
 `
-      
+
       expect(expectedContent).toContain('---')
       expect(expectedContent).toContain(`title: ${title}`)
       expect(expectedContent).toContain(`description: ${description}`)
@@ -157,12 +157,12 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
           test: 'vitest',
         },
       }
-      
+
       fs.writeFileSync('package.json', JSON.stringify(existingPkg, null, 2))
-      
+
       const prefix = 'docs'
       const docsDir = './docs'
-      
+
       // Read and modify
       const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
       pkg.type = 'module'
@@ -171,16 +171,16 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
       scripts[`${prefix}:build`] = `revitedocs build ${docsDir}`
       scripts[`${prefix}:preview`] = `revitedocs preview ${docsDir}`
       pkg.scripts = scripts
-      
+
       const devDeps = pkg.devDependencies || {}
       devDeps['revitedocs'] = 'latest'
       pkg.devDependencies = devDeps
-      
+
       fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2))
-      
+
       // Verify
       const result = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-      
+
       expect(result.type).toBe('module')
       expect(result.scripts['docs:dev']).toBe('revitedocs dev ./docs')
       expect(result.scripts['docs:build']).toBe('revitedocs build ./docs')
@@ -192,7 +192,7 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
     it('should create package.json if it does not exist', () => {
       const prefix = 'docs'
       const docsDir = './docs'
-      
+
       // Simulate createPackageJson logic
       const pkg = {
         name: path.basename(tempDir),
@@ -208,11 +208,11 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
           revitedocs: 'latest',
         },
       }
-      
+
       fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2))
-      
+
       const result = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-      
+
       expect(result.version).toBe('0.0.1')
       expect(result.private).toBe(true)
       expect(result.type).toBe('module')
@@ -222,7 +222,7 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
     it('should use custom script prefix', () => {
       const prefix = 'documentation'
       const docsDir = './my-docs'
-      
+
       const pkg = {
         name: 'test',
         version: '1.0.0',
@@ -233,11 +233,11 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
           [`${prefix}:preview`]: `revitedocs preview ${docsDir}`,
         },
       }
-      
+
       fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2))
-      
+
       const result = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-      
+
       expect(result.scripts['documentation:dev']).toBe('revitedocs dev ./my-docs')
       expect(result.scripts['documentation:build']).toBe('revitedocs build ./my-docs')
       expect(result.scripts['documentation:preview']).toBe('revitedocs preview ./my-docs')
@@ -249,9 +249,9 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
       const docsDir = './docs'
       const docsPath = path.resolve(docsDir)
       const configPath = path.join(docsPath, '.revitedocs')
-      
+
       fs.mkdirSync(configPath, { recursive: true })
-      
+
       expect(fs.existsSync(configPath)).toBe(true)
     })
 
@@ -259,9 +259,9 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
       const docsDir = './project/docs/site'
       const docsPath = path.resolve(docsDir)
       const configPath = path.join(docsPath, '.revitedocs')
-      
+
       fs.mkdirSync(configPath, { recursive: true })
-      
+
       expect(fs.existsSync(configPath)).toBe(true)
     })
   })
@@ -271,17 +271,17 @@ Check out the [ReviteDocs documentation](https://github.com) to learn more.
       const docsDir = './docs'
       const docsPath = path.resolve(docsDir)
       const indexPath = path.join(docsPath, 'index.md')
-      
+
       fs.mkdirSync(docsPath, { recursive: true })
-      
+
       const existingContent = '# Existing Content\n\nDo not overwrite!'
       fs.writeFileSync(indexPath, existingContent)
-      
+
       // Simulate createExampleDocs check
       if (!fs.existsSync(indexPath)) {
         fs.writeFileSync(indexPath, 'New content')
       }
-      
+
       const result = fs.readFileSync(indexPath, 'utf-8')
       expect(result).toBe(existingContent)
     })
@@ -326,4 +326,3 @@ function detectPackageManager(userAgent: string): string {
   if (userAgent.includes('bun')) return 'bun'
   return 'npm'
 }
-

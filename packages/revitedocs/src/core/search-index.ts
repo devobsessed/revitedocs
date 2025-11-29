@@ -28,11 +28,13 @@ function extractSearchableContent(filePath: string, rootDir: string): SearchDocu
 
     // Generate URL from file path
     const relativePath = path.relative(rootDir, filePath)
-    let url = '/' + relativePath
-      .replace(/\.mdx?$/, '')
-      .replace(/\/index$/, '/')
-      .replace(/index$/, '/')
-    
+    let url =
+      '/' +
+      relativePath
+        .replace(/\.mdx?$/, '')
+        .replace(/\/index$/, '/')
+        .replace(/index$/, '/')
+
     if (!url.endsWith('/')) url += '/'
 
     // Extract title
@@ -88,24 +90,26 @@ function extractHeadings(markdown: string): string[] {
  * Clean markdown for better search indexing
  */
 function cleanMarkdown(markdown: string): string {
-  return markdown
-    // Remove code blocks
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]+`/g, '')
-    // Remove links but keep text
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    // Remove images
-    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
-    // Remove HTML tags
-    .replace(/<[^>]+>/g, '')
-    // Remove frontmatter markers
-    .replace(/^---[\s\S]*?---/m, '')
-    // Remove directive markers
-    .replace(/:::\s*\w+.*$/gm, '')
-    .replace(/^:::$/gm, '')
-    // Normalize whitespace
-    .replace(/\s+/g, ' ')
-    .trim()
+  return (
+    markdown
+      // Remove code blocks
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/`[^`]+`/g, '')
+      // Remove links but keep text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      // Remove images
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
+      // Remove HTML tags
+      .replace(/<[^>]+>/g, '')
+      // Remove frontmatter markers
+      .replace(/^---[\s\S]*?---/m, '')
+      // Remove directive markers
+      .replace(/:::\s*\w+.*$/gm, '')
+      .replace(/^:::$/gm, '')
+      // Normalize whitespace
+      .replace(/\s+/g, ' ')
+      .trim()
+  )
 }
 
 /**
@@ -113,9 +117,7 @@ function cleanMarkdown(markdown: string): string {
  */
 function pathToTitle(filePath: string): string {
   const name = path.basename(filePath, path.extname(filePath))
-  return name
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase())
+  return name.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 /**
@@ -227,4 +229,3 @@ export function search(query, options = {}) {
 }
 `
 }
-

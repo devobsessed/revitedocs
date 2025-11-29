@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { createMarkdownProcessor, extractFrontmatter, extractToc, transformMarkdown } from './markdown.js'
+import {
+  createMarkdownProcessor,
+  extractFrontmatter,
+  extractToc,
+  transformMarkdown,
+} from './markdown.js'
 
 describe('markdown', () => {
   describe('extractFrontmatter', () => {
@@ -152,4 +157,3 @@ title: Test Page
     })
   })
 })
-

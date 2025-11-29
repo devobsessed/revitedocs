@@ -58,13 +58,13 @@ function extractToc(content: string): TocItem[] {
     const depth = match[1].length
     const text = match[2].trim()
     const baseId = slugify(text)
-    
+
     // Make IDs unique by appending -1, -2, etc. for duplicates
     // This matches rehype-slug's behavior
     const count = idCounts.get(baseId) || 0
     const id = count === 0 ? baseId : `${baseId}-${count}`
     idCounts.set(baseId, count + 1)
-    
+
     toc.push({ depth, text, id })
   }
 
@@ -137,7 +137,6 @@ function createContainerJsx(
   type: string,
   title: string | undefined,
   _content: Root['children']
-   
 ): any {
   // Callout types
   if (['info', 'warning', 'tip', 'danger', 'note'].includes(type)) {
@@ -165,7 +164,7 @@ function remarkMermaid() {
     for (const node of tree.children) {
       if (node.type === 'code' && (node.lang === 'mermaid' || node.lang === 'mmd')) {
         const codeNode = node as Code
-         
+
         newChildren.push({
           type: 'mdxJsxFlowElement',
           name: 'MermaidDiagram',
@@ -196,12 +195,7 @@ function remarkMermaid() {
 export function revitedocsMarkdownPlugin(): Plugin {
   // Create MDX processor once
   const processor = createProcessor({
-    remarkPlugins: [
-      remarkGfm,
-      remarkFrontmatter,
-      remarkCustomContainers,
-      remarkMermaid,
-    ],
+    remarkPlugins: [remarkGfm, remarkFrontmatter, remarkCustomContainers, remarkMermaid],
     rehypePlugins: [rehypeSlug],
     jsx: false, // Output to JavaScript, not JSX
     outputFormat: 'program',
@@ -233,7 +227,7 @@ export function revitedocsMarkdownPlugin(): Plugin {
         const processedCode = compiledCode
           .replace(/export default function MDXContent/g, 'function _MDXContent')
           .replace(/export \{ MDXContent as default \}/g, '')
-        
+
         // Generate the output module with component imports
         const output = `
 import { Callout, MermaidDiagram, Tabs, TabGroup, Steps, Step, Card, CardGroup, FileTree, Badge } from 'revitedocs/components';

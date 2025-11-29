@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react'
 import { MDXProvider } from '@mdx-js/react'
-import { Search, Moon, Sun, Menu, X } from 'lucide-react'
+import { Menu, Moon, Search, Sun, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Callout } from '../docs/Callout.js'
+import { CopyMarkdownButton } from '../docs/CopyMarkdownButton.js'
+import { FileTree } from '../docs/FileTree.js'
+import { MermaidDiagram } from '../docs/MermaidDiagram.js'
+import { Step, Steps } from '../docs/Steps.js'
+import { TabGroup } from '../docs/Tabs.js'
+import { LanguageSwitcher, type LocaleConfig } from '../layout/LanguageSwitcher.js'
+import { VersionSwitcher } from '../layout/VersionSwitcher.js'
+import { SearchModal, setSearchFunction } from '../search/index.js'
 import { Button } from '../ui/button.js'
 import { ScrollArea } from '../ui/scroll-area.js'
-import { SearchModal, setSearchFunction } from '../search/index.js'
-import { VersionSwitcher } from '../layout/VersionSwitcher.js'
-import { LanguageSwitcher, type LocaleConfig } from '../layout/LanguageSwitcher.js'
-import { CopyMarkdownButton } from '../docs/CopyMarkdownButton.js'
-import { Callout } from '../docs/Callout.js'
-import { MermaidDiagram } from '../docs/MermaidDiagram.js'
-import { TabGroup } from '../docs/Tabs.js'
-import { Steps, Step } from '../docs/Steps.js'
-import { FileTree } from '../docs/FileTree.js'
 import { cn } from '../utils.js'
 
 // Types for route and config
@@ -56,19 +56,23 @@ export interface DocsConfig {
 export type SearchFn = (
   query: string,
   options?: { maxResults?: number }
-) => Array<{
-  id: string
-  title: string
-  description: string
-  url: string
-  score: number
-}> | Promise<Array<{
-  id: string
-  title: string
-  description: string
-  url: string
-  score: number
-}>>
+) =>
+  | Array<{
+      id: string
+      title: string
+      description: string
+      url: string
+      score: number
+    }>
+  | Promise<
+      Array<{
+        id: string
+        title: string
+        description: string
+        url: string
+        score: number
+      }>
+    >
 
 export interface DocsAppProps {
   routes: RouteInfo[]
@@ -185,14 +189,13 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
     }
   }, [currentLocale, config.defaultLocale, config.locales])
 
-  // Find current route
-  const route =
-    routes.find(
-      (r) =>
-        r.path === path ||
-        r.path === path.replace(/\/$/, '') ||
-        (r.path === '/' && (path === '/' || path === ''))
-    ) || routes[0]
+  // Find current route - don't fall back to routes[0] to properly show 404
+  const route = routes.find(
+    (r) =>
+      r.path === path ||
+      r.path === path.replace(/\/$/, '') ||
+      (r.path === '/' && (path === '/' || path === ''))
+  )
 
   // Scroll spy for TOC
   useEffect(() => {
@@ -236,11 +239,37 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
 
   if (!route) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-zinc-950">
-        <div className="text-center p-8">
-          <h1 className="text-2xl font-bold text-red-500 mb-2">404 - No pages found</h1>
-          <p className="text-zinc-500 dark:text-zinc-400">Create an index.md file in your docs folder.</p>
-        </div>
+      <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+        <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur">
+          <div className="flex h-14 items-center px-4 md:px-6">
+            <a href="/" className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold">
+                {config.title?.[0] || 'D'}
+              </div>
+              <span className="font-semibold hidden sm:inline">
+                {config.title || 'Documentation'}
+              </span>
+            </a>
+          </div>
+        </header>
+        <main
+          className="flex items-center justify-center"
+          style={{ minHeight: 'calc(100vh - 3.5rem)' }}
+        >
+          <div className="text-center p-8">
+            <h1 className="text-6xl font-bold text-zinc-300 dark:text-zinc-700 mb-4">404</h1>
+            <h2 className="text-2xl font-semibold mb-2">Page Not Found</h2>
+            <p className="text-zinc-500 dark:text-zinc-400 mb-6">
+              The page you're looking for doesn't exist or has been moved.
+            </p>
+            <a
+              href="/"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 h-10 px-4 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+            >
+              Go to Homepage
+            </a>
+          </div>
+        </main>
       </div>
     )
   }
@@ -251,11 +280,7 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
       {/* Search Modal - render after hydration to avoid mismatch */}
       {isMounted && (
-        <SearchModal
-          open={searchOpen}
-          onOpenChange={setSearchOpen}
-          onNavigate={handleNavigate}
-        />
+        <SearchModal open={searchOpen} onOpenChange={setSearchOpen} onNavigate={handleNavigate} />
       )}
 
       {/* Header */}
@@ -276,7 +301,9 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
             <div className="h-8 w-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold">
               {config.title?.[0] || 'D'}
             </div>
-            <span className="font-semibold hidden sm:inline">{config.title || 'Documentation'}</span>
+            <span className="font-semibold hidden sm:inline">
+              {config.title || 'Documentation'}
+            </span>
           </div>
 
           <div className="flex-1" />
@@ -301,11 +328,7 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
             size="icon"
             onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
           >
-            {theme === 'dark' ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
 
           {/* Nav links */}
@@ -405,10 +428,7 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
                   <div />
                 )}
                 {route.rawMarkdown && (
-                  <CopyMarkdownButton
-                    markdown={route.rawMarkdown}
-                    className="flex-shrink-0 mt-1"
-                  />
+                  <CopyMarkdownButton markdown={route.rawMarkdown} className="flex-shrink-0 mt-1" />
                 )}
               </div>
             )}
@@ -464,4 +484,3 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
 export function DocsAppSSR(props: DocsAppProps) {
   return <DocsApp {...props} ssr />
 }
-

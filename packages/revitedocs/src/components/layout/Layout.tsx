@@ -60,7 +60,7 @@ export function Layout({
   const { theme, toggleTheme } = useTheme()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  
+
   const tocIds = toc.map((item) => item.id)
   const activeId = useScrollSpy(tocIds)
 
@@ -85,7 +85,14 @@ export function Layout({
     }
   }, [currentLocale, defaultLocale, locales])
 
-  return createElement('div', { className: cn('min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100', className) },
+  return createElement(
+    'div',
+    {
+      className: cn(
+        'min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100',
+        className
+      ),
+    },
     // Search Modal
     createElement(SearchModal, {
       open: searchOpen,
@@ -105,45 +112,54 @@ export function Layout({
     }),
 
     // Main content area
-    createElement('div', { className: 'flex' },
+    createElement(
+      'div',
+      { className: 'flex' },
       // Sidebar
-      sidebar.length > 0 && createElement(Sidebar, {
-        sections: sidebar,
-        currentPath,
-        isOpen: sidebarOpen,
-        onClose: () => setSidebarOpen(false),
-        versions,
-        currentVersion,
-        defaultVersion,
-        locales,
-        currentLocale,
-        defaultLocale,
-      }),
+      sidebar.length > 0 &&
+        createElement(Sidebar, {
+          sections: sidebar,
+          currentPath,
+          isOpen: sidebarOpen,
+          onClose: () => setSidebarOpen(false),
+          versions,
+          currentVersion,
+          defaultVersion,
+          locales,
+          currentLocale,
+          defaultLocale,
+        }),
 
       // Main content
-      createElement('main', {
-        className: cn(
-          'flex-1 min-w-0',
-          sidebar.length > 0 && 'md:ml-64', // Offset for sidebar on desktop
-          toc.length > 0 && 'lg:mr-56', // Offset for TOC on large screens
-        ),
-      },
+      createElement(
+        'main',
+        {
+          className: cn(
+            'flex-1 min-w-0',
+            sidebar.length > 0 && 'md:ml-64', // Offset for sidebar on desktop
+            toc.length > 0 && 'lg:mr-56' // Offset for TOC on large screens
+          ),
+        },
         createElement('div', { className: 'px-4 md:px-8 py-8' }, children)
       ),
 
       // Table of Contents
-      toc.length > 0 && createElement('aside', {
-        className: 'hidden lg:block fixed top-14 right-4 w-52 max-h-[calc(100vh-5rem)] overflow-y-auto py-8',
-      },
-        createElement(TableOfContents, { items: toc, activeId })
-      )
+      toc.length > 0 &&
+        createElement(
+          'aside',
+          {
+            className:
+              'hidden lg:block fixed top-14 right-4 w-52 max-h-[calc(100vh-5rem)] overflow-y-auto py-8',
+          },
+          createElement(TableOfContents, { items: toc, activeId })
+        )
     ),
 
     // Mobile sidebar overlay
-    sidebarOpen && createElement('div', {
-      className: 'fixed inset-0 z-30 bg-black/50 md:hidden',
-      onClick: () => setSidebarOpen(false),
-    })
+    sidebarOpen &&
+      createElement('div', {
+        className: 'fixed inset-0 z-30 bg-black/50 md:hidden',
+        onClick: () => setSidebarOpen(false),
+      })
   )
 }
-

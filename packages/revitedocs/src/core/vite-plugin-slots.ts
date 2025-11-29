@@ -35,7 +35,7 @@ export interface SlotResolution {
 export function resolveThemeSlot(component: SlotComponent, root: string): SlotResolution {
   // Check for custom component in .revitedocs/theme/
   const extensions = ['.tsx', '.jsx', '.ts', '.js']
-  
+
   for (const ext of extensions) {
     const customPath = path.join(root, '.revitedocs', 'theme', `${component}${ext}`)
     if (fs.existsSync(customPath)) {
@@ -85,7 +85,7 @@ function isValidSlot(component: string): component is SlotComponent {
 
 /**
  * Vite plugin that provides theme slot resolution via virtual modules
- * 
+ *
  * Allows users to override layout components by placing files in:
  * .revitedocs/theme/Header.tsx
  * .revitedocs/theme/Footer.tsx
@@ -119,10 +119,10 @@ export function revitedocsSlotsPlugin(config: ResolvedConfig): Plugin {
      */
     configureServer(server) {
       const themeDir = path.join(config.root, '.revitedocs', 'theme')
-      
+
       // Watch for file additions/deletions in theme directory
       server.watcher.add(themeDir)
-      
+
       server.watcher.on('add', (file) => {
         if (file.startsWith(themeDir)) {
           invalidateSlotModules(server, file)
@@ -149,11 +149,11 @@ export function revitedocsSlotsPlugin(config: ResolvedConfig): Plugin {
  */
 function invalidateSlotModules(server: ViteDevServer, file: string) {
   const fileName = path.basename(file, path.extname(file))
-  
+
   if (isValidSlot(fileName)) {
     const moduleId = RESOLVED_SLOT_PREFIX + fileName
     const mod = server.moduleGraph.getModuleById(moduleId)
-    
+
     if (mod) {
       server.moduleGraph.invalidateModule(mod)
       server.ws.send({
@@ -163,4 +163,3 @@ function invalidateSlotModules(server: ViteDevServer, file: string) {
     }
   }
 }
-

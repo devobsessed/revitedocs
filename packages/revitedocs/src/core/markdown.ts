@@ -34,7 +34,19 @@ async function getHighlighter(): Promise<Highlighter> {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
       themes: ['github-dark', 'github-light'],
-      langs: ['javascript', 'typescript', 'jsx', 'tsx', 'json', 'bash', 'shell', 'markdown', 'html', 'css', 'yaml'],
+      langs: [
+        'javascript',
+        'typescript',
+        'jsx',
+        'tsx',
+        'json',
+        'bash',
+        'shell',
+        'markdown',
+        'html',
+        'css',
+        'yaml',
+      ],
     })
   }
   return highlighterPromise
@@ -91,7 +103,7 @@ export function extractToc(content: string): TocItem[] {
     const depth = match[1].length
     const text = match[2].trim()
     const baseId = slugify(text)
-    
+
     // Make IDs unique by appending -1, -2, etc. for duplicates
     // This matches rehype-slug's behavior
     const count = idCounts.get(baseId) || 0
@@ -120,7 +132,7 @@ export async function createMarkdownProcessor() {
     .use(function rehypeShiki() {
       return async (tree: any) => {
         const { visit } = await import('unist-util-visit')
-        
+
         visit(tree, 'element', (node: any) => {
           if (node.tagName === 'pre') {
             const codeNode = node.children?.[0]
@@ -134,7 +146,7 @@ export async function createMarkdownProcessor() {
                   lang: highlighter.getLoadedLanguages().includes(lang) ? lang : 'text',
                   theme: 'github-dark',
                 })
-                
+
                 // Parse the highlighted HTML and replace the node
                 node.type = 'raw'
                 node.value = highlighted
@@ -157,14 +169,13 @@ export async function createMarkdownProcessor() {
 export async function transformMarkdown(rawContent: string): Promise<MarkdownResult> {
   const { frontmatter, content } = extractFrontmatter(rawContent)
   const toc = extractToc(content)
-  
+
   const processor = await createMarkdownProcessor()
   const result = await processor.process(content)
-  
+
   return {
     html: String(result),
     frontmatter,
     toc,
   }
 }
-

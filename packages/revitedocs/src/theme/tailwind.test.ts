@@ -26,7 +26,7 @@ describe('tailwind utilities', () => {
     it('includes docs content paths', () => {
       const config = getDefaultTailwindConfig('/docs')
       expect(config.content).toBeDefined()
-      expect(config.content?.some(p => p.includes('/docs'))).toBe(true)
+      expect(config.content?.some((p) => p.includes('/docs'))).toBe(true)
     })
 
     it('includes theme extension with CSS variables', () => {
@@ -50,13 +50,13 @@ describe('tailwind utilities', () => {
     })
 
     it('deeply merges nested objects', () => {
-      const target = { 
-        a: 1, 
-        nested: { x: 1, y: 2, z: 0 } 
-      }
-      const source = { 
+      const target = {
         a: 1,
-        nested: { x: 1, y: 3, z: 4 } 
+        nested: { x: 1, y: 2, z: 0 },
+      }
+      const source = {
+        a: 1,
+        nested: { x: 1, y: 3, z: 4 },
       }
       const result = deepMerge(target, source)
       expect(result).toEqual({
@@ -96,42 +96,42 @@ describe('tailwind utilities', () => {
 
   describe('getUserTailwindConfigPath', () => {
     it('returns path for tailwind.config.js if it exists', () => {
-      vi.spyOn(fs, 'existsSync').mockImplementation((p) => 
-        p === '/docs/.revitedocs/tailwind.config.js'
+      vi.spyOn(fs, 'existsSync').mockImplementation(
+        (p) => p === '/docs/.revitedocs/tailwind.config.js'
       )
-      
+
       const result = getUserTailwindConfigPath('/docs')
       expect(result).toBe('/docs/.revitedocs/tailwind.config.js')
     })
 
     it('returns path for tailwind.config.ts if it exists', () => {
-      vi.spyOn(fs, 'existsSync').mockImplementation((p) => 
-        p === '/docs/.revitedocs/tailwind.config.ts'
+      vi.spyOn(fs, 'existsSync').mockImplementation(
+        (p) => p === '/docs/.revitedocs/tailwind.config.ts'
       )
-      
+
       const result = getUserTailwindConfigPath('/docs')
       expect(result).toBe('/docs/.revitedocs/tailwind.config.ts')
     })
 
     it('returns path for tailwind.config.mjs if it exists', () => {
-      vi.spyOn(fs, 'existsSync').mockImplementation((p) => 
-        p === '/docs/.revitedocs/tailwind.config.mjs'
+      vi.spyOn(fs, 'existsSync').mockImplementation(
+        (p) => p === '/docs/.revitedocs/tailwind.config.mjs'
       )
-      
+
       const result = getUserTailwindConfigPath('/docs')
       expect(result).toBe('/docs/.revitedocs/tailwind.config.mjs')
     })
 
     it('prefers .js over .ts and .mjs', () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(true)
-      
+
       const result = getUserTailwindConfigPath('/docs')
       expect(result).toBe('/docs/.revitedocs/tailwind.config.js')
     })
 
     it('returns null if no config file exists', () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(false)
-      
+
       const result = getUserTailwindConfigPath('/docs')
       expect(result).toBeNull()
     })
@@ -160,10 +160,7 @@ describe('tailwind utilities', () => {
         content: ['/custom/**/*.tsx'],
       }
       const result = mergeTailwindConfig(defaultConfig, userConfig)
-      expect(result.content).toEqual([
-        '/default/**/*.tsx',
-        '/custom/**/*.tsx',
-      ])
+      expect(result.content).toEqual(['/default/**/*.tsx', '/custom/**/*.tsx'])
     })
 
     it('merges plugins arrays', () => {
@@ -233,4 +230,3 @@ describe('tailwind utilities', () => {
     })
   })
 })
-

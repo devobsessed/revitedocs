@@ -83,4 +83,3 @@ describe('highlightMatches', () => {
     expect(result).toBe('Hello <mark>[world]</mark>')
   })
 })
-

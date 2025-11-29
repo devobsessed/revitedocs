@@ -1,10 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { 
-  generateLlmsOverview, 
-  generateLlmsFull, 
-  generateLlmsTxt,
-  type LlmsRoute 
-} from './llms.js'
+import { generateLlmsOverview, generateLlmsFull, generateLlmsTxt, type LlmsRoute } from './llms.js'
 import type { ResolvedConfig } from './config.js'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -49,7 +44,7 @@ describe('llms.txt generation', () => {
   describe('generateLlmsOverview', () => {
     it('should generate overview with title from config', () => {
       const result = generateLlmsOverview(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('# My Documentation')
     })
 
@@ -59,13 +54,13 @@ describe('llms.txt generation', () => {
         llms: { enabled: true, title: 'Custom Title' },
       }
       const result = generateLlmsOverview(configWithCustomTitle, mockRoutes)
-      
+
       expect(result).toContain('# Custom Title')
     })
 
     it('should include description in blockquote', () => {
       const result = generateLlmsOverview(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('> Comprehensive docs for My Project')
     })
 
@@ -75,13 +70,13 @@ describe('llms.txt generation', () => {
         llms: { enabled: true, description: 'Custom description' },
       }
       const result = generateLlmsOverview(configWithCustomDesc, mockRoutes)
-      
+
       expect(result).toContain('> Custom description')
     })
 
     it('should list all pages with titles and descriptions', () => {
       const result = generateLlmsOverview(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('- [Introduction](/): Getting started guide')
       expect(result).toContain('- [Installation](/guide/installation): How to install the package')
       expect(result).toContain('- [Configuration](/guide/configuration): Configuration options')
@@ -93,28 +88,26 @@ describe('llms.txt generation', () => {
         { path: '/guide/intro', file: '/docs/guide/intro.md', frontmatter: {} },
       ]
       const result = generateLlmsOverview(mockConfig, routesWithoutTitles)
-      
+
       expect(result).toContain('- [Guide Intro](/guide/intro)')
     })
 
     it('should handle root path title conversion', () => {
-      const routesWithRoot: LlmsRoute[] = [
-        { path: '/', file: '/docs/index.md', frontmatter: {} },
-      ]
+      const routesWithRoot: LlmsRoute[] = [{ path: '/', file: '/docs/index.md', frontmatter: {} }]
       const result = generateLlmsOverview(mockConfig, routesWithRoot)
-      
+
       expect(result).toContain('- [Home](/)')
     })
 
     it('should include Pages section header', () => {
       const result = generateLlmsOverview(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('## Pages')
     })
 
     it('should handle empty routes', () => {
       const result = generateLlmsOverview(mockConfig, [])
-      
+
       expect(result).toContain('# My Documentation')
       expect(result).toContain('## Pages')
     })
@@ -146,14 +139,14 @@ describe('llms.txt generation', () => {
 
     it('should include title and description header', async () => {
       const result = await generateLlmsFull(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('# My Documentation')
       expect(result).toContain('> Comprehensive docs for My Project')
     })
 
     it('should concatenate all page content with separators', async () => {
       const result = await generateLlmsFull(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('---')
       expect(result).toContain('# Introduction')
       expect(result).toContain('Welcome to the documentation.')
@@ -163,14 +156,14 @@ describe('llms.txt generation', () => {
 
     it('should strip frontmatter from content', async () => {
       const result = await generateLlmsFull(mockConfig, mockRoutes)
-      
+
       // Should not contain raw YAML frontmatter
       expect(result).not.toMatch(/^---\ntitle:/m)
     })
 
     it('should use frontmatter title for section headers', async () => {
       const result = await generateLlmsFull(mockConfig, mockRoutes)
-      
+
       expect(result).toContain('# Introduction')
       expect(result).toContain('# Installation')
       expect(result).toContain('# Configuration')
@@ -179,16 +172,16 @@ describe('llms.txt generation', () => {
 
     it('should handle empty routes', async () => {
       const result = await generateLlmsFull(mockConfig, [])
-      
+
       expect(result).toContain('# My Documentation')
       expect(result).not.toContain('---\n#') // No page sections
     })
 
     it('should handle file read errors gracefully', async () => {
       vi.mocked(fs.readFile).mockRejectedValue(new Error('File not found'))
-      
+
       const result = await generateLlmsFull(mockConfig, mockRoutes)
-      
+
       // Should still generate header
       expect(result).toContain('# My Documentation')
     })
@@ -216,9 +209,9 @@ describe('llms.txt generation', () => {
       const routes: LlmsRoute[] = [
         { path: '/', file: '/docs/index.md', frontmatter: { title: 'Test' } },
       ]
-      
+
       await generateLlmsTxt(mockConfig, routes, tempDir)
-      
+
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(tempDir, 'llms.txt'),
         expect.stringContaining('# My Documentation')
@@ -229,9 +222,9 @@ describe('llms.txt generation', () => {
       const routes: LlmsRoute[] = [
         { path: '/', file: '/docs/index.md', frontmatter: { title: 'Test' } },
       ]
-      
+
       await generateLlmsTxt(mockConfig, routes, tempDir)
-      
+
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(tempDir, 'llms-full.txt'),
         expect.stringContaining('Test content.')
@@ -243,9 +236,9 @@ describe('llms.txt generation', () => {
         ...mockConfig,
         llms: { enabled: false },
       }
-      
+
       await generateLlmsTxt(disabledConfig, mockRoutes, tempDir)
-      
+
       expect(fs.writeFile).not.toHaveBeenCalled()
     })
 
@@ -254,12 +247,11 @@ describe('llms.txt generation', () => {
       const routes: LlmsRoute[] = [
         { path: '/', file: '/docs/index.md', frontmatter: { title: 'Test' } },
       ]
-      
+
       await generateLlmsTxt(mockConfig, routes, tempDir)
-      
+
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('llms.txt'))
       consoleSpy.mockRestore()
     })
   })
 })
-

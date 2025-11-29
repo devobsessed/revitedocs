@@ -309,4 +309,3 @@ describe('theme exports', () => {
     expect(typeof theme.getTailwindThemeExtension).toBe('function')
   })
 })
-

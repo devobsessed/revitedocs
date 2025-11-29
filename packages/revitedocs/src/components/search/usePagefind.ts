@@ -85,4 +85,3 @@ export function usePagefind(maxResults = 10): UsePagefindReturn {
     clear,
   }
 }
-

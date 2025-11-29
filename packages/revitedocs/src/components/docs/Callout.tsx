@@ -66,35 +66,21 @@ const variantConfig: Record<
  * Callout component for highlighting important information.
  * Supports info, warning, tip, danger, and note variants.
  */
-export function Callout({
-  variant = 'info',
-  title,
-  children,
-  className,
-}: CalloutProps) {
+export function Callout({ variant = 'info', title, children, className }: CalloutProps) {
   const config = variantConfig[variant]
   const Icon = config.icon
   const displayTitle = title ?? config.defaultTitle
 
   return (
     <div
-      className={cn(
-        'not-prose my-6 rounded-lg border p-4',
-        config.containerClass,
-        className
-      )}
+      className={cn('not-prose my-6 rounded-lg border p-4', config.containerClass, className)}
       role="alert"
       aria-label={displayTitle}
     >
       <div className="flex items-start gap-3">
-        <Icon
-          className={cn('mt-0.5 h-5 w-5 flex-shrink-0', config.iconClass)}
-          aria-hidden="true"
-        />
+        <Icon className={cn('mt-0.5 h-5 w-5 flex-shrink-0', config.iconClass)} aria-hidden="true" />
         <div className="flex-1 min-w-0">
-          <p className={cn('font-semibold mb-1', config.titleClass)}>
-            {displayTitle}
-          </p>
+          <p className={cn('font-semibold mb-1', config.titleClass)}>{displayTitle}</p>
           <div className="text-sm text-muted-foreground leading-relaxed [&>p]:mb-2 [&>p:last-child]:mb-0">
             {children}
           </div>

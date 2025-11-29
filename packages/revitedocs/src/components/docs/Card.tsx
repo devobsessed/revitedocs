@@ -28,14 +28,7 @@ export interface CardProps {
  * Card component for navigation links or content highlights.
  * Uses shadcn/ui Card under the hood.
  */
-export function Card({
-  title,
-  description,
-  href,
-  icon,
-  className,
-  children,
-}: CardProps) {
+export function Card({ title, description, href, icon, className, children }: CardProps) {
   const cardContent = (
     <ShadcnCard
       className={cn(
@@ -111,8 +104,6 @@ export function CardGroup({ cols = 2, children, className }: CardGroupProps) {
   }
 
   return (
-    <div className={cn('not-prose my-6 grid gap-4', gridCols[cols], className)}>
-      {children}
-    </div>
+    <div className={cn('not-prose my-6 grid gap-4', gridCols[cols], className)}>{children}</div>
   )
 }

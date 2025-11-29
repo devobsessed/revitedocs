@@ -70,7 +70,11 @@ export interface PagefindSearchResponse {
 export interface PagefindInstance {
   init: () => Promise<void>
   search: (query: string, options?: PagefindSearchOptions) => Promise<PagefindSearchResponse>
-  debouncedSearch: (query: string, options?: PagefindSearchOptions, debounceMs?: number) => Promise<PagefindSearchResponse | null>
+  debouncedSearch: (
+    query: string,
+    options?: PagefindSearchOptions,
+    debounceMs?: number
+  ) => Promise<PagefindSearchResponse | null>
   filters: () => Promise<Record<string, Record<string, number>>>
   preload: (query: string) => Promise<void>
   destroy: () => void
@@ -128,4 +132,3 @@ export interface SearchState {
   /** Error message if search failed */
   error: string | null
 }
-

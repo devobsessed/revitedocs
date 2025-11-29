@@ -10,7 +10,10 @@ describe('vite-plugin-markdown', () => {
     })
 
     describe('transform', () => {
-      const transform = plugin.transform as (code: string, id: string) => Promise<{ code: string; map: null } | undefined>
+      const transform = plugin.transform as (
+        code: string,
+        id: string
+      ) => Promise<{ code: string; map: null } | undefined>
 
       it('transforms .md files', async () => {
         const code = `---
@@ -73,4 +76,3 @@ Some text`
     })
   })
 })
-

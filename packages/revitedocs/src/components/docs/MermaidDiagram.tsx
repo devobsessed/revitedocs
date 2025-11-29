@@ -48,8 +48,8 @@ export function MermaidDiagram({ chart, className = '' }: MermaidDiagramProps) {
       const mermaid = mermaidModule.default
 
       // Detect theme
-      const isDark = typeof document !== 'undefined' && 
-        document.documentElement.classList.contains('dark')
+      const isDark =
+        typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
 
       mermaid.initialize({
         startOnLoad: false,
@@ -115,7 +115,9 @@ export function MermaidDiagram({ chart, className = '' }: MermaidDiagramProps) {
     return (
       <div className={cn('rounded-lg border bg-zinc-100 dark:bg-zinc-800/50 p-8', className)}>
         <div className="h-32 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse" />
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 text-center">Loading diagram...</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 text-center">
+          Loading diagram...
+        </p>
       </div>
     )
   }
@@ -123,7 +125,12 @@ export function MermaidDiagram({ chart, className = '' }: MermaidDiagramProps) {
   // Error state
   if (error) {
     return (
-      <div className={cn('rounded-lg border border-red-500/30 bg-red-500/5 dark:bg-red-500/10 p-4', className)}>
+      <div
+        className={cn(
+          'rounded-lg border border-red-500/30 bg-red-500/5 dark:bg-red-500/10 p-4',
+          className
+        )}
+      >
         <p className="text-sm text-red-600 dark:text-red-400">Failed to render diagram: {error}</p>
         <pre className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 overflow-auto bg-zinc-100 dark:bg-zinc-800 p-2 rounded">
           {chart}
@@ -195,9 +202,7 @@ export function MermaidDiagram({ chart, className = '' }: MermaidDiagramProps) {
             <div className="relative w-full h-full">
               {/* Controls header */}
               <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-3 bg-zinc-900/90 backdrop-blur border-b border-zinc-700">
-                <span className="text-sm font-medium text-zinc-300">
-                  Mermaid Diagram
-                </span>
+                <span className="text-sm font-medium text-zinc-300">Mermaid Diagram</span>
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
@@ -257,4 +262,3 @@ export function MermaidDiagram({ chart, className = '' }: MermaidDiagramProps) {
     </>
   )
 }
-

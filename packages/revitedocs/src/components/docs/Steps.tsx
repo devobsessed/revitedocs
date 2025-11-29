@@ -42,11 +42,7 @@ export function Step({ number, title, children, className }: StepProps) {
 
       {/* Step content */}
       <div className="pt-0.5">
-        {title && (
-          <h4 className="mb-2 font-semibold text-zinc-900 dark:text-zinc-100">
-            {title}
-          </h4>
-        )}
+        {title && <h4 className="mb-2 font-semibold text-zinc-900 dark:text-zinc-100">{title}</h4>}
         <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed [&>p]:mb-2 [&>p:last-child]:mb-0">
           {children}
         </div>
@@ -67,13 +63,8 @@ export interface StepsProps {
  */
 export function Steps({ children, className }: StepsProps) {
   return (
-    <div
-      className={cn('not-prose my-6 relative', className)}
-      role="list"
-      aria-label="Steps"
-    >
+    <div className={cn('not-prose my-6 relative', className)} role="list" aria-label="Steps">
       {children}
     </div>
   )
 }
-

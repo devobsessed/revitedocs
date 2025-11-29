@@ -1,20 +1,20 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { cn } from "../utils.js";
+import { useEffect, useState, type ReactNode } from 'react'
+import { cn } from '../utils.js'
 
 export interface TabItem {
   /** Tab label shown in tab button */
-  label: string;
+  label: string
   /** Tab content */
-  content: ReactNode;
+  content: ReactNode
 }
 
 export interface TabsProps {
   /** Array of tab items */
-  items: TabItem[];
+  items: TabItem[]
   /** Default active tab index */
-  defaultIndex?: number;
+  defaultIndex?: number
   /** Additional CSS classes */
-  className?: string;
+  className?: string
 }
 
 /**
@@ -22,29 +22,29 @@ export interface TabsProps {
  * SSR-compatible with fallback to showing first tab only.
  */
 export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
-  const [activeIndex, setActiveIndex] = useState(defaultIndex);
-  const [isMounted, setIsMounted] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(defaultIndex)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
-  if (items.length === 0) return null;
+  if (items.length === 0) return null
 
   // SSR fallback: show all content as static content
   if (!isMounted) {
     return (
-      <div className={cn("not-prose my-6", className)}>
+      <div className={cn('not-prose my-6', className)}>
         <div className="w-full border-b border-border">
           <div className="flex">
             {items.map((item, index) => (
               <div
                 key={index}
                 className={cn(
-                  "px-4 py-2 text-sm font-medium border-b-2",
+                  'px-4 py-2 text-sm font-medium border-b-2',
                   index === defaultIndex
-                    ? "border-primary text-foreground"
-                    : "border-transparent text-muted-foreground"
+                    ? 'border-primary text-foreground'
+                    : 'border-transparent text-muted-foreground'
                 )}
               >
                 {item.label}
@@ -54,12 +54,12 @@ export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
         </div>
         <div className="p-4">{items[defaultIndex]?.content}</div>
       </div>
-    );
+    )
   }
 
   // Client-side interactive tabs
   return (
-    <div className={cn("not-prose my-6", className)}>
+    <div className={cn('not-prose my-6', className)}>
       <div className="w-full border-b border-border">
         <div className="flex" role="tablist">
           {items.map((item, index) => (
@@ -69,10 +69,10 @@ export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
               aria-selected={index === activeIndex}
               onClick={() => setActiveIndex(index)}
               className={cn(
-                "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                'px-4 py-2 text-sm font-medium border-b-2 transition-colors',
                 index === activeIndex
-                  ? "border-primary text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? 'border-primary text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               )}
             >
               {item.label}
@@ -84,7 +84,7 @@ export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
         {items[activeIndex]?.content}
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -92,19 +92,19 @@ export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
  */
 export interface TabGroupProps {
   /** Tab labels array */
-  labels: string[];
+  labels: string[]
   /** Children must be the same count as labels */
-  children: ReactNode[];
+  children: ReactNode[]
   /** Additional CSS classes */
-  className?: string;
+  className?: string
 }
 
 export function TabGroup({ labels, children, className }: TabGroupProps) {
-  const childArray = Array.isArray(children) ? children : [children];
+  const childArray = Array.isArray(children) ? children : [children]
   const items: TabItem[] = labels.map((label, i) => ({
     label,
     content: childArray[i] || null,
-  }));
+  }))
 
-  return <Tabs items={items} className={className} />;
+  return <Tabs items={items} className={className} />
 }

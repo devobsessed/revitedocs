@@ -1,5 +1,9 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { buildSearchIndex, generateSearchIndexModule, type SearchIndexData } from './search-index.js'
+import {
+  buildSearchIndex,
+  generateSearchIndexModule,
+  type SearchIndexData,
+} from './search-index.js'
 
 const VIRTUAL_MODULE_ID = 'virtual:revitedocs/search'
 const RESOLVED_VIRTUAL_MODULE_ID = '\0' + VIRTUAL_MODULE_ID
@@ -17,7 +21,9 @@ export function revitedocsSearchPlugin(rootDir: string): Plugin {
     console.log('[revitedocs] Building search index...')
     const startTime = Date.now()
     indexData = await buildSearchIndex(rootDir)
-    console.log(`[revitedocs] Search index built: ${indexData.documents.length} pages indexed in ${Date.now() - startTime}ms`)
+    console.log(
+      `[revitedocs] Search index built: ${indexData.documents.length} pages indexed in ${Date.now() - startTime}ms`
+    )
     return indexData
   }
 
@@ -76,4 +82,3 @@ export function revitedocsSearchPlugin(rootDir: string): Plugin {
     },
   }
 }
-

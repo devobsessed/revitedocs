@@ -10,7 +10,7 @@ export function useScrollSpy(ids: string[]): string {
     if (ids.length === 0) return
 
     let currentId = ids[0]
-    
+
     for (const id of ids) {
       const element = document.getElementById(id)
       if (element) {
@@ -22,7 +22,7 @@ export function useScrollSpy(ids: string[]): string {
         }
       }
     }
-    
+
     setActiveId(currentId)
   }, [ids])
 
@@ -31,7 +31,7 @@ export function useScrollSpy(ids: string[]): string {
 
     handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
@@ -39,4 +39,3 @@ export function useScrollSpy(ids: string[]): string {
 
   return activeId
 }
-

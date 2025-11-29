@@ -58,9 +58,7 @@ export function TableOfContents({ items, activeId, className }: TableOfContentsP
                       'relative block py-1 text-sm transition-colors duration-200',
                       'hover:text-foreground',
                       isNested ? 'pl-6' : 'pl-4',
-                      isActive
-                        ? 'font-medium text-primary'
-                        : 'text-muted-foreground'
+                      isActive ? 'font-medium text-primary' : 'text-muted-foreground'
                     )}
                   >
                     {isActive && (

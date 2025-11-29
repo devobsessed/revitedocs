@@ -10,9 +10,10 @@ type SearchResultItem = {
 }
 
 // Search function type - can be sync or async
-type SearchFn = (query: string, options?: { maxResults?: number }) => 
-  | SearchResultItem[]
-  | Promise<SearchResultItem[]>
+type SearchFn = (
+  query: string,
+  options?: { maxResults?: number }
+) => SearchResultItem[] | Promise<SearchResultItem[]>
 
 /** Search function - set via setSearchFunction */
 let searchFn: SearchFn | null = null
@@ -35,7 +36,7 @@ export function setSearchFunction(fn: SearchFn): void {
 export async function initSearch(): Promise<boolean> {
   // Give a small delay to allow entry point to set the function
   if (!isInitialized) {
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
   }
   return isInitialized
 }
@@ -43,10 +44,7 @@ export async function initSearch(): Promise<boolean> {
 /**
  * Search documentation
  */
-export async function searchDocs(
-  query: string,
-  maxResults = 10
-): Promise<SearchResult[]> {
+export async function searchDocs(query: string, maxResults = 10): Promise<SearchResult[]> {
   if (!query.trim()) return []
 
   // Ensure search is initialized
@@ -62,11 +60,9 @@ export async function searchDocs(
   try {
     // Handle both sync and async search functions
     const resultsOrPromise = searchFn(query)
-    const results = Array.isArray(resultsOrPromise) 
-      ? resultsOrPromise 
-      : await resultsOrPromise
-    
-    return results.slice(0, maxResults).map(result => ({
+    const results = Array.isArray(resultsOrPromise) ? resultsOrPromise : await resultsOrPromise
+
+    return results.slice(0, maxResults).map((result) => ({
       id: result.id,
       title: result.title,
       url: result.url,
@@ -98,7 +94,7 @@ export const isPagefindAvailable = isSearchAvailable
  */
 export function highlightMatches(text: string, query: string): string {
   if (!query.trim()) return text
-  
+
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
   let result = text
 

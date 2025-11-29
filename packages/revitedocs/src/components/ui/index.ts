@@ -1,6 +1,6 @@
 // shadcn/ui primitives
-export { Button, buttonVariants, type ButtonProps } from "./button.js"
-export { Input } from "./input.js"
+export { Button, buttonVariants, type ButtonProps } from './button.js'
+export { Input } from './input.js'
 export {
   Dialog,
   DialogPortal,
@@ -12,7 +12,7 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-} from "./dialog.js"
+} from './dialog.js'
 export {
   Command,
   CommandDialog,
@@ -23,17 +23,10 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
-} from "./command.js"
-export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs.js"
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "./card.js"
-export { Badge, badgeVariants, type BadgeProps } from "./badge.js"
+} from './command.js'
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs.js'
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card.js'
+export { Badge, badgeVariants, type BadgeProps } from './badge.js'
 export {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -50,7 +43,6 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-} from "./dropdown-menu.js"
-export { ScrollArea, ScrollBar } from "./scroll-area.js"
-export { Separator } from "./separator.js"
-
+} from './dropdown-menu.js'
+export { ScrollArea, ScrollBar } from './scroll-area.js'
+export { Separator } from './separator.js'

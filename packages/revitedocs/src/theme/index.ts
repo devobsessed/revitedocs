@@ -1,6 +1,6 @@
 /**
  * ReviteDocs Theme System
- * 
+ *
  * CSS Variables schema for customizing colors, typography, and layout.
  * Users can override these in their custom CSS or extend via Tailwind config.
  */
@@ -23,7 +23,7 @@ export const colorVars = {
   border: `${CSS_VAR_PREFIX}-color-border`,
   accent: `${CSS_VAR_PREFIX}-color-accent`,
   accentForeground: `${CSS_VAR_PREFIX}-color-accent-foreground`,
-  
+
   // Semantic colors
   info: `${CSS_VAR_PREFIX}-color-info`,
   infoForeground: `${CSS_VAR_PREFIX}-color-info-foreground`,
@@ -33,7 +33,7 @@ export const colorVars = {
   errorForeground: `${CSS_VAR_PREFIX}-color-error-foreground`,
   success: `${CSS_VAR_PREFIX}-color-success`,
   successForeground: `${CSS_VAR_PREFIX}-color-success-foreground`,
-  
+
   // Component-specific
   sidebarBackground: `${CSS_VAR_PREFIX}-color-sidebar-bg`,
   sidebarForeground: `${CSS_VAR_PREFIX}-color-sidebar-fg`,
@@ -153,7 +153,7 @@ export const defaultLightTheme: Required<ThemeVariables> = {
     border: '220 13% 91%',
     accent: '220 14% 96%',
     accentForeground: '224 71% 4%',
-    
+
     // Semantic
     info: '199 89% 48%',
     infoForeground: '0 0% 100%',
@@ -163,7 +163,7 @@ export const defaultLightTheme: Required<ThemeVariables> = {
     errorForeground: '0 0% 100%',
     success: '142 71% 45%',
     successForeground: '0 0% 100%',
-    
+
     // Component-specific
     sidebarBackground: '0 0% 98%',
     sidebarForeground: '224 71% 4%',
@@ -181,8 +181,10 @@ export const defaultLightTheme: Required<ThemeVariables> = {
     headerHeight: '64px',
   },
   typography: {
-    fontSans: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    fontMono: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+    fontSans:
+      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontMono:
+      'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
     fontSizeBase: '16px',
     fontSizeSm: '14px',
     fontSizeLg: '18px',
@@ -208,7 +210,7 @@ export const defaultDarkTheme: ThemeVariables = {
     border: '216 34% 17%',
     accent: '216 34% 17%',
     accentForeground: '213 31% 91%',
-    
+
     // Semantic
     info: '199 89% 48%',
     infoForeground: '0 0% 100%',
@@ -218,7 +220,7 @@ export const defaultDarkTheme: ThemeVariables = {
     errorForeground: '0 0% 100%',
     success: '142 71% 45%',
     successForeground: '0 0% 100%',
-    
+
     // Component-specific
     sidebarBackground: '224 71% 4%',
     sidebarForeground: '213 31% 91%',
@@ -252,12 +254,9 @@ export function hslVar(varName: string): string {
 /**
  * Generate CSS variable declarations from theme values
  */
-export function generateCssVariables(
-  theme: ThemeVariables,
-  selector: string = ':root'
-): string {
+export function generateCssVariables(theme: ThemeVariables, selector: string = ':root'): string {
   const lines: string[] = [`${selector} {`]
-  
+
   // Colors
   if (theme.colors) {
     for (const [key, value] of Object.entries(theme.colors)) {
@@ -269,7 +268,7 @@ export function generateCssVariables(
       }
     }
   }
-  
+
   // Layout
   if (theme.layout) {
     for (const [key, value] of Object.entries(theme.layout)) {
@@ -281,7 +280,7 @@ export function generateCssVariables(
       }
     }
   }
-  
+
   // Typography
   if (theme.typography) {
     for (const [key, value] of Object.entries(theme.typography)) {
@@ -293,7 +292,7 @@ export function generateCssVariables(
       }
     }
   }
-  
+
   // Radius
   if (theme.radius) {
     for (const [key, value] of Object.entries(theme.radius)) {
@@ -305,7 +304,7 @@ export function generateCssVariables(
       }
     }
   }
-  
+
   lines.push('}')
   return lines.join('\n')
 }
@@ -319,7 +318,7 @@ export function generateThemeCss(
 ): string {
   const lightCss = generateCssVariables(lightTheme, ':root')
   const darkCss = generateCssVariables(darkTheme, '.dark')
-  
+
   return `/* ReviteDocs Theme - Auto-generated */
 ${lightCss}
 
@@ -477,11 +476,11 @@ export interface LocaleConfig {
 
 /**
  * Props passed to custom Header component
- * 
+ *
  * @example
  * ```tsx
  * import type { HeaderProps } from 'revitedocs/theme'
- * 
+ *
  * export default function Header({ title, nav, onSearchOpen }: HeaderProps) {
  *   return (
  *     <header>
@@ -513,11 +512,11 @@ export interface HeaderProps {
 
 /**
  * Props passed to custom Sidebar component
- * 
+ *
  * @example
  * ```tsx
  * import type { SidebarProps } from 'revitedocs/theme'
- * 
+ *
  * export default function Sidebar({ sections, currentPath }: SidebarProps) {
  *   return (
  *     <nav>
@@ -559,11 +558,11 @@ export interface SidebarProps {
 
 /**
  * Props passed to custom Footer component
- * 
+ *
  * @example
  * ```tsx
  * import type { FooterProps } from 'revitedocs/theme'
- * 
+ *
  * export default function Footer({ copyright }: FooterProps) {
  *   return (
  *     <footer>
@@ -584,12 +583,12 @@ export interface FooterProps {
 
 /**
  * Props passed to custom Layout component
- * 
+ *
  * @example
  * ```tsx
  * import type { LayoutProps } from 'revitedocs/theme'
  * import { Header, Sidebar, TableOfContents } from 'revitedocs/components'
- * 
+ *
  * export default function Layout({ children, toc, frontmatter }: LayoutProps) {
  *   return (
  *     <div>
@@ -627,11 +626,11 @@ export interface LayoutProps {
 
 /**
  * Props passed to custom NotFound component
- * 
+ *
  * @example
  * ```tsx
  * import type { NotFoundProps } from 'revitedocs/theme'
- * 
+ *
  * export default function NotFound({ message }: NotFoundProps) {
  *   return (
  *     <div>

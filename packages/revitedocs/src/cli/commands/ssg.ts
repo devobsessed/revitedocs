@@ -1,25 +1,22 @@
-import mdx from "@mdx-js/rollup";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
-import fs from "node:fs";
-import { createRequire } from "node:module";
-import path from "node:path";
-import pc from "picocolors";
-import rehypeSlug from "rehype-slug";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkGfm from "remark-gfm";
-import { build as viteBuild, type Plugin } from "vite";
-import type { ResolvedConfig } from "../../core/config.js";
-import {
-  remarkContainerDirectives,
-  remarkMermaid,
-} from "../../core/remark-plugins.js";
-import { generateRoutes, type Route } from "../../core/router.js";
-import { revitedocsRoutesPlugin } from "../../core/vite-plugin-routes.js";
-import { revitedocsConfigPlugin } from "../../core/vite-plugin.js";
+import mdx from '@mdx-js/rollup'
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import pc from 'picocolors'
+import rehypeSlug from 'rehype-slug'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
+import { build as viteBuild, type Plugin } from 'vite'
+import type { ResolvedConfig } from '../../core/config.js'
+import { remarkContainerDirectives, remarkMermaid } from '../../core/remark-plugins.js'
+import { generateRoutes, type Route } from '../../core/router.js'
+import { revitedocsRoutesPlugin } from '../../core/vite-plugin-routes.js'
+import { revitedocsConfigPlugin } from '../../core/vite-plugin.js'
 
 // Create require to resolve dependencies from revitedocs's location
-const require = createRequire(import.meta.url);
+const require = createRequire(import.meta.url)
 
 /**
  * Resolve a dependency path using Node's resolution algorithm
@@ -29,29 +26,25 @@ function resolveDep(dep: string): string {
   try {
     // Use require.resolve to get the actual path where the package is installed
     // Then get the package directory by locating node_modules/package-name
-    const resolved = require.resolve(dep);
-    const nodeModulesIndex = resolved.lastIndexOf("node_modules");
+    const resolved = require.resolve(dep)
+    const nodeModulesIndex = resolved.lastIndexOf('node_modules')
     if (nodeModulesIndex === -1) {
-      return resolved;
+      return resolved
     }
     // Get everything up to and including the package name (handles scoped packages too)
-    const afterNodeModules = resolved.slice(
-      nodeModulesIndex + "node_modules/".length
-    );
-    const packageName = afterNodeModules.startsWith("@")
-      ? afterNodeModules.split("/").slice(0, 2).join("/")
-      : afterNodeModules.split("/")[0];
-    return (
-      resolved.slice(0, nodeModulesIndex + "node_modules/".length) + packageName
-    );
+    const afterNodeModules = resolved.slice(nodeModulesIndex + 'node_modules/'.length)
+    const packageName = afterNodeModules.startsWith('@')
+      ? afterNodeModules.split('/').slice(0, 2).join('/')
+      : afterNodeModules.split('/')[0]
+    return resolved.slice(0, nodeModulesIndex + 'node_modules/'.length) + packageName
   } catch {
-    return dep; // Fall back to bare specifier if resolution fails
+    return dep // Fall back to bare specifier if resolution fails
   }
 }
 
 export interface SSGOptions {
-  outDir: string;
-  base?: string;
+  outDir: string
+  base?: string
 }
 
 /**
@@ -70,7 +63,7 @@ function createBuildIndexHtml(title: string): string {
     <div id="app"><!--app-html--></div>
     <script type="module" src="./entry-client.js"></script>
   </body>
-</html>`;
+</html>`
 }
 
 /**
@@ -433,19 +426,19 @@ function writeCssEntry(revitedocsDir: string): string {
 .prose th, .prose td, article th, article td { border: 1px solid hsl(var(--border)); padding: 0.5rem 0.75rem; text-align: left; }
 .prose th, article th { background: hsl(var(--muted)); font-weight: 600; }
 .prose tbody tr:nth-child(even), article tbody tr:nth-child(even) { background: hsl(var(--muted) / 0.3); }
-`;
-  const cssPath = path.join(revitedocsDir, "styles.css");
-  fs.writeFileSync(cssPath, cssContent);
-  return cssPath;
+`
+  const cssPath = path.join(revitedocsDir, 'styles.css')
+  fs.writeFileSync(cssPath, cssContent)
+  return cssPath
 }
 
 /**
  * Write client entry code to a physical file for Tailwind to scan
  */
 function writeClientEntry(revitedocsDir: string): string {
-  const entryPath = path.join(revitedocsDir, "entry-client.js");
-  fs.writeFileSync(entryPath, generateClientEntryCode());
-  return entryPath;
+  const entryPath = path.join(revitedocsDir, 'entry-client.js')
+  fs.writeFileSync(entryPath, generateClientEntryCode())
+  return entryPath
 }
 
 /**
@@ -494,7 +487,7 @@ document.addEventListener('click', (e) => {
     window.location.href = link.href
   }
 })
-`;
+`
 }
 
 /**
@@ -502,14 +495,14 @@ document.addEventListener('click', (e) => {
  */
 function createBuildSearchPlugin(): Plugin {
   return {
-    name: "revitedocs:build-search",
+    name: 'revitedocs:build-search',
     resolveId(id) {
-      if (id === "virtual:revitedocs/search") {
-        return "\0revitedocs-build-search";
+      if (id === 'virtual:revitedocs/search') {
+        return '\0revitedocs-build-search'
       }
     },
     load(id) {
-      if (id === "\0revitedocs-build-search") {
+      if (id === '\0revitedocs-build-search') {
         // Return Pagefind-based search
         // Use new Function to create dynamic import that won't be analyzed at build time
         return `
@@ -544,10 +537,10 @@ export async function search(query) {
     return []
   }
 }
-`;
+`
       }
     },
-  };
+  }
 }
 
 /**
@@ -724,26 +717,26 @@ export function render(routePath) {
 // Export routes for pre-rendering
 export { routes }
 export { config }
-`;
+`
 }
 
 /**
  * Create the server entry plugin for SSG build
  */
-function createServerEntryPlugin(): import("vite").Plugin {
+function createServerEntryPlugin(): import('vite').Plugin {
   return {
-    name: "revitedocs:server-entry",
+    name: 'revitedocs:server-entry',
     resolveId(id) {
-      if (id === "virtual:revitedocs/server-entry") {
-        return "\0revitedocs-server-entry";
+      if (id === 'virtual:revitedocs/server-entry') {
+        return '\0revitedocs-server-entry'
       }
     },
     load(id) {
-      if (id === "\0revitedocs-server-entry") {
-        return generateServerEntryCode();
+      if (id === '\0revitedocs-server-entry') {
+        return generateServerEntryCode()
       }
     },
-  };
+  }
 }
 
 /**
@@ -751,19 +744,19 @@ function createServerEntryPlugin(): import("vite").Plugin {
  */
 function createSSRSearchPlugin(): Plugin {
   return {
-    name: "revitedocs:ssr-search",
+    name: 'revitedocs:ssr-search',
     resolveId(id) {
-      if (id === "virtual:revitedocs/search") {
-        return "\0revitedocs-ssr-search";
+      if (id === 'virtual:revitedocs/search') {
+        return '\0revitedocs-ssr-search'
       }
     },
     load(id) {
-      if (id === "\0revitedocs-ssr-search") {
+      if (id === '\0revitedocs-ssr-search') {
         // Return a stub search function for SSR - actual search uses Pagefind on client
-        return `export async function search(query) { return [] }`;
+        return `export async function search(query) { return [] }`
       }
     },
-  };
+  }
 }
 
 /**
@@ -778,28 +771,25 @@ function createHtmlPage(
   clientStyles: string[],
   base: string
 ): string {
-  const title = frontmatter.title
-    ? `${frontmatter.title} | ${config.title}`
-    : config.title;
-  const description =
-    (frontmatter.description as string) || config.description || "";
+  const title = frontmatter.title ? `${frontmatter.title} | ${config.title}` : config.title
+  const description = (frontmatter.description as string) || config.description || ''
 
   // Normalize base - ensure single slash between base and asset paths
-  const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
 
   const scriptTags = clientScripts
     .map((src) => {
-      const normalizedSrc = src.startsWith("/") ? src : "/" + src;
-      return `<script type="module" src="${normalizedBase}${normalizedSrc}"></script>`;
+      const normalizedSrc = src.startsWith('/') ? src : '/' + src
+      return `<script type="module" src="${normalizedBase}${normalizedSrc}"></script>`
     })
-    .join("\n    ");
+    .join('\n    ')
 
   const styleTags = clientStyles
     .map((href) => {
-      const normalizedHref = href.startsWith("/") ? href : "/" + href;
-      return `<link rel="stylesheet" href="${normalizedBase}${normalizedHref}">`;
+      const normalizedHref = href.startsWith('/') ? href : '/' + href
+      return `<link rel="stylesheet" href="${normalizedBase}${normalizedHref}">`
     })
-    .join("\n    ");
+    .join('\n    ')
 
   // Inline script to set theme before page renders (prevents FOUC)
   const themeScript = `<script>
@@ -812,7 +802,7 @@ function createHtmlPage(
     document.documentElement.classList.add('dark');
   }
 })();
-</script>`;
+</script>`
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -829,7 +819,7 @@ function createHtmlPage(
     <div id="app">${appHtml}</div>
     ${scriptTags}
   </body>
-</html>`;
+</html>`
 }
 
 /**
@@ -841,25 +831,25 @@ function create404Page(
   clientStyles: string[],
   base: string
 ): string {
-  const title = `Page Not Found | ${config.title}`;
-  const description = "The page you're looking for doesn't exist.";
+  const title = `Page Not Found | ${config.title}`
+  const description = "The page you're looking for doesn't exist."
 
   // Normalize base
-  const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
 
   const scriptTags = clientScripts
     .map((src) => {
-      const normalizedSrc = src.startsWith("/") ? src : "/" + src;
-      return `<script type="module" src="${normalizedBase}${normalizedSrc}"></script>`;
+      const normalizedSrc = src.startsWith('/') ? src : '/' + src
+      return `<script type="module" src="${normalizedBase}${normalizedSrc}"></script>`
     })
-    .join("\n    ");
+    .join('\n    ')
 
   const styleTags = clientStyles
     .map((href) => {
-      const normalizedHref = href.startsWith("/") ? href : "/" + href;
-      return `<link rel="stylesheet" href="${normalizedBase}${normalizedHref}">`;
+      const normalizedHref = href.startsWith('/') ? href : '/' + href
+      return `<link rel="stylesheet" href="${normalizedBase}${normalizedHref}">`
     })
-    .join("\n    ");
+    .join('\n    ')
 
   const themeScript = `<script>
 (function() {
@@ -871,7 +861,7 @@ function create404Page(
     document.documentElement.classList.add('dark');
   }
 })();
-</script>`;
+</script>`
 
   const notFoundContent = `
     <div class="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
@@ -879,9 +869,9 @@ function create404Page(
         <div class="flex h-14 items-center px-4 md:px-6">
           <a href="${normalizedBase}/" class="flex items-center gap-2">
             <div class="h-8 w-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold">
-              ${config.title?.[0] || "D"}
+              ${config.title?.[0] || 'D'}
             </div>
-            <span class="font-semibold hidden sm:inline">${config.title || "Documentation"}</span>
+            <span class="font-semibold hidden sm:inline">${config.title || 'Documentation'}</span>
           </a>
         </div>
       </header>
@@ -895,7 +885,7 @@ function create404Page(
           </a>
         </div>
       </main>
-    </div>`;
+    </div>`
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -912,7 +902,7 @@ function create404Page(
     <div id="app">${notFoundContent}</div>
     ${scriptTags}
   </body>
-</html>`;
+</html>`
 }
 
 /**
@@ -923,49 +913,44 @@ export async function buildSSG(
   config: ResolvedConfig,
   options: SSGOptions
 ): Promise<void> {
-  const { outDir, base = "/" } = options;
-  const distPath = path.join(rootDir, outDir);
+  const { outDir, base = '/' } = options
+  const distPath = path.join(rootDir, outDir)
   // Server bundle goes inside .revitedocs for building
-  const revitedocsDir = path.join(rootDir, ".revitedocs");
-  const distServerPath = path.join(revitedocsDir, "server");
+  const revitedocsDir = path.join(rootDir, '.revitedocs')
+  const distServerPath = path.join(revitedocsDir, 'server')
 
-  console.log(pc.cyan("\n📦 Building SSG..."));
+  console.log(pc.cyan('\n📦 Building SSG...'))
 
   // Create .revitedocs directory for build artifacts
   if (!fs.existsSync(revitedocsDir)) {
-    fs.mkdirSync(revitedocsDir, { recursive: true });
+    fs.mkdirSync(revitedocsDir, { recursive: true })
   }
 
   // Write build files to .revitedocs folder
-  const indexPath = path.join(revitedocsDir, "index.html");
-  const buildIndexHtml = createBuildIndexHtml(config.title);
-  fs.writeFileSync(indexPath, buildIndexHtml);
+  const indexPath = path.join(revitedocsDir, 'index.html')
+  const buildIndexHtml = createBuildIndexHtml(config.title)
+  fs.writeFileSync(indexPath, buildIndexHtml)
 
   // Write client entry to physical file for Tailwind to scan
-  writeClientEntry(revitedocsDir);
+  writeClientEntry(revitedocsDir)
 
   // Write CSS entry with @source pointing to client entry
-  writeCssEntry(revitedocsDir);
+  writeCssEntry(revitedocsDir)
 
   try {
     // Step 1: Build client bundle
-    console.log(pc.dim("  Building client bundle..."));
+    console.log(pc.dim('  Building client bundle...'))
     await viteBuild({
       root: revitedocsDir,
       base,
       plugins: [
         tailwindcss(),
         {
-          enforce: "pre",
+          enforce: 'pre',
           ...mdx({
-            remarkPlugins: [
-              remarkGfm,
-              remarkFrontmatter,
-              remarkContainerDirectives,
-              remarkMermaid,
-            ],
+            remarkPlugins: [remarkGfm, remarkFrontmatter, remarkContainerDirectives, remarkMermaid],
             rehypePlugins: [rehypeSlug],
-            providerImportSource: "@mdx-js/react",
+            providerImportSource: '@mdx-js/react',
           }),
         },
         react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
@@ -979,27 +964,27 @@ export async function buildSSG(
         ssrManifest: true,
         emptyOutDir: true,
       },
-      logLevel: "warn",
+      logLevel: 'warn',
       optimizeDeps: {
-        include: ["react", "react-dom", "@mdx-js/react"],
+        include: ['react', 'react-dom', '@mdx-js/react'],
       },
       resolve: {
-        dedupe: ["react", "react-dom", "@mdx-js/react"],
+        dedupe: ['react', 'react-dom', '@mdx-js/react'],
         alias: {
-          react: resolveDep("react"),
-          "react-dom": resolveDep("react-dom"),
-          "@mdx-js/react": resolveDep("@mdx-js/react"),
-          mermaid: resolveDep("mermaid"),
+          react: resolveDep('react'),
+          'react-dom': resolveDep('react-dom'),
+          '@mdx-js/react': resolveDep('@mdx-js/react'),
+          mermaid: resolveDep('mermaid'),
         },
       },
-    });
-    console.log(pc.green("  ✓ Client bundle built"));
+    })
+    console.log(pc.green('  ✓ Client bundle built'))
 
     // Step 2: Build server bundle for pre-rendering
-    console.log(pc.dim("  Building server bundle..."));
+    console.log(pc.dim('  Building server bundle...'))
 
     // Create the server entry plugin with higher priority for resolving
-    const serverEntryPlugin = createServerEntryPlugin();
+    const serverEntryPlugin = createServerEntryPlugin()
 
     await viteBuild({
       root: revitedocsDir,
@@ -1008,19 +993,14 @@ export async function buildSSG(
         // Server entry plugin must come first to resolve the virtual entry
         {
           ...serverEntryPlugin,
-          enforce: "pre",
+          enforce: 'pre',
         },
         {
-          enforce: "pre",
+          enforce: 'pre',
           ...mdx({
-            remarkPlugins: [
-              remarkGfm,
-              remarkFrontmatter,
-              remarkContainerDirectives,
-              remarkMermaid,
-            ],
+            remarkPlugins: [remarkGfm, remarkFrontmatter, remarkContainerDirectives, remarkMermaid],
             rehypePlugins: [rehypeSlug],
-            providerImportSource: "@mdx-js/react",
+            providerImportSource: '@mdx-js/react',
           }),
         },
         react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
@@ -1029,70 +1009,66 @@ export async function buildSSG(
         createSSRSearchPlugin(),
       ],
       build: {
-        outDir: "server",
+        outDir: 'server',
         ssr: true,
         emptyOutDir: true,
         rollupOptions: {
           input: {
-            "server-entry": "virtual:revitedocs/server-entry",
+            'server-entry': 'virtual:revitedocs/server-entry',
           },
           output: {
-            entryFileNames: "[name].js",
+            entryFileNames: '[name].js',
           },
         },
       },
-      logLevel: "warn",
+      logLevel: 'warn',
       resolve: {
-        dedupe: ["react", "react-dom", "@mdx-js/react"],
+        dedupe: ['react', 'react-dom', '@mdx-js/react'],
         alias: {
-          react: resolveDep("react"),
-          "react-dom": resolveDep("react-dom"),
-          "@mdx-js/react": resolveDep("@mdx-js/react"),
-          mermaid: resolveDep("mermaid"),
+          react: resolveDep('react'),
+          'react-dom': resolveDep('react-dom'),
+          '@mdx-js/react': resolveDep('@mdx-js/react'),
+          mermaid: resolveDep('mermaid'),
         },
       },
       ssr: {
         // Don't externalize revitedocs components - we need them bundled
-        noExternal: ["revitedocs"],
+        noExternal: ['revitedocs'],
       },
-    });
-    console.log(pc.green("  ✓ Server bundle built"));
+    })
+    console.log(pc.green('  ✓ Server bundle built'))
 
     // Step 3: Pre-render routes
-    console.log(pc.dim("  Pre-rendering routes..."));
+    console.log(pc.dim('  Pre-rendering routes...'))
 
     // Get all routes
-    const routes = await generateRoutes(rootDir);
+    const routes = await generateRoutes(rootDir)
 
     // Load server bundle
-    const serverEntryPath = path.join(distServerPath, "server-entry.js");
-    const serverModule = await import(serverEntryPath);
-    const { render } = serverModule;
+    const serverEntryPath = path.join(distServerPath, 'server-entry.js')
+    const serverModule = await import(serverEntryPath)
+    const { render } = serverModule
 
     // Get client assets from the built HTML
-    const builtIndexPath = path.join(distPath, "index.html");
-    let clientScripts: string[] = [];
-    let clientStyles: string[] = [];
+    const builtIndexPath = path.join(distPath, 'index.html')
+    let clientScripts: string[] = []
+    let clientStyles: string[] = []
 
     if (fs.existsSync(builtIndexPath)) {
-      const builtHtml = fs.readFileSync(builtIndexPath, "utf-8");
+      const builtHtml = fs.readFileSync(builtIndexPath, 'utf-8')
       // Extract script src from built HTML
-      const scriptMatches = builtHtml.match(/src="([^"]+\.js)"/g) || [];
-      clientScripts = scriptMatches
-        .map((m) => m.match(/src="([^"]+)"/)?.[1] || "")
-        .filter(Boolean);
+      const scriptMatches = builtHtml.match(/src="([^"]+\.js)"/g) || []
+      clientScripts = scriptMatches.map((m) => m.match(/src="([^"]+)"/)?.[1] || '').filter(Boolean)
       // Extract CSS links
-      const cssMatches = builtHtml.match(/href="([^"]+\.css)"/g) || [];
-      clientStyles = cssMatches
-        .map((m) => m.match(/href="([^"]+)"/)?.[1] || "")
-        .filter(Boolean);
+      const cssMatches = builtHtml.match(/href="([^"]+\.css)"/g) || []
+      clientStyles = cssMatches.map((m) => m.match(/href="([^"]+)"/)?.[1] || '').filter(Boolean)
     }
 
     // Pre-render each route
-    let renderedCount = 0;
+    let renderedCount = 0
     for (const route of routes) {
       try {
-        const { html: appHtml, frontmatter } = render(route.path);
+        const { html: appHtml, frontmatter } = render(route.path)
 
         const fullHtml = createHtmlPage(
           config,
@@ -1102,50 +1078,48 @@ export async function buildSSG(
           clientScripts,
           clientStyles,
           base
-        );
+        )
 
         // Determine output path
         const outPath =
-          route.path === "/"
-            ? path.join(distPath, "index.html")
-            : path.join(distPath, route.path, "index.html");
+          route.path === '/'
+            ? path.join(distPath, 'index.html')
+            : path.join(distPath, route.path, 'index.html')
 
         // Ensure directory exists
-        const outDirPath = path.dirname(outPath);
+        const outDirPath = path.dirname(outPath)
         if (!fs.existsSync(outDirPath)) {
-          fs.mkdirSync(outDirPath, { recursive: true });
+          fs.mkdirSync(outDirPath, { recursive: true })
         }
 
         // Write pre-rendered HTML
-        fs.writeFileSync(outPath, fullHtml);
-        renderedCount++;
-        console.log(
-          pc.dim(`    ${route.path} → ${path.relative(rootDir, outPath)}`)
-        );
+        fs.writeFileSync(outPath, fullHtml)
+        renderedCount++
+        console.log(pc.dim(`    ${route.path} → ${path.relative(rootDir, outPath)}`))
       } catch (error) {
-        console.error(pc.yellow(`  ⚠ Failed to render ${route.path}:`), error);
+        console.error(pc.yellow(`  ⚠ Failed to render ${route.path}:`), error)
       }
     }
 
-    console.log(pc.green(`  ✓ Pre-rendered ${renderedCount} pages`));
+    console.log(pc.green(`  ✓ Pre-rendered ${renderedCount} pages`))
 
     // Step 4: Generate 404 page
-    console.log(pc.dim("  Generating 404 page..."));
-    const notFoundHtml = create404Page(config, clientScripts, clientStyles, base);
-    const notFoundPath = path.join(distPath, "404.html");
-    fs.writeFileSync(notFoundPath, notFoundHtml);
-    console.log(pc.green("  ✓ 404 page generated"));
+    console.log(pc.dim('  Generating 404 page...'))
+    const notFoundHtml = create404Page(config, clientScripts, clientStyles, base)
+    const notFoundPath = path.join(distPath, '404.html')
+    fs.writeFileSync(notFoundPath, notFoundHtml)
+    console.log(pc.green('  ✓ 404 page generated'))
 
     // Step 5: Clean up server bundle
-    console.log(pc.dim("  Cleaning up..."));
-    fs.rmSync(distServerPath, { recursive: true, force: true });
-    console.log(pc.green("  ✓ Cleanup complete"));
+    console.log(pc.dim('  Cleaning up...'))
+    fs.rmSync(distServerPath, { recursive: true, force: true })
+    console.log(pc.green('  ✓ Cleanup complete'))
   } finally {
     // Remove the temporary build files from .revitedocs
     try {
-      fs.unlinkSync(indexPath);
-      fs.unlinkSync(path.join(revitedocsDir, "entry-client.js"));
-      fs.unlinkSync(path.join(revitedocsDir, "styles.css"));
+      fs.unlinkSync(indexPath)
+      fs.unlinkSync(path.join(revitedocsDir, 'entry-client.js'))
+      fs.unlinkSync(path.join(revitedocsDir, 'styles.css'))
     } catch {
       /* ignore cleanup errors */
     }
@@ -1161,33 +1135,32 @@ export async function generateSitemap(
   outDir: string,
   baseUrl?: string
 ): Promise<void> {
-  const routes = await generateRoutes(rootDir);
-  const base = baseUrl || config.base || "https://example.com";
+  const routes = await generateRoutes(rootDir)
+  const base = baseUrl || config.base || 'https://example.com'
 
   // Ensure base URL doesn't end with slash
-  const normalizedBase = base.replace(/\/$/, "");
+  const normalizedBase = base.replace(/\/$/, '')
 
-  const now = new Date().toISOString().split("T")[0];
+  const now = new Date().toISOString().split('T')[0]
 
   const urls = routes
     .map((route) => {
-      const loc =
-        route.path === "/" ? normalizedBase + "/" : normalizedBase + route.path;
+      const loc = route.path === '/' ? normalizedBase + '/' : normalizedBase + route.path
 
       return `  <url>
     <loc>${loc}</loc>
     <lastmod>${now}</lastmod>
-  </url>`;
+  </url>`
     })
-    .join("\n");
+    .join('\n')
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls}
-</urlset>`;
+</urlset>`
 
-  const sitemapPath = path.join(rootDir, outDir, "sitemap.xml");
-  fs.writeFileSync(sitemapPath, sitemap);
+  const sitemapPath = path.join(rootDir, outDir, 'sitemap.xml')
+  fs.writeFileSync(sitemapPath, sitemap)
 
-  console.log(pc.green(`✓ Sitemap generated (${routes.length} URLs)`));
+  console.log(pc.green(`✓ Sitemap generated (${routes.length} URLs)`))
 }

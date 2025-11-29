@@ -35,12 +35,12 @@ async function generateLlmsRoutes(rootDir: string): Promise<LlmsRoute[]> {
   })
 
   return files
-    .filter(file => !path.basename(file).startsWith('_'))
-    .map(file => {
+    .filter((file) => !path.basename(file).startsWith('_'))
+    .map((file) => {
       const relativePath = path.relative(rootDir, file)
       const content = fs.readFileSync(file, 'utf-8')
       const { data: frontmatter } = matter(content)
-      
+
       return {
         path: fileToUrlPath(relativePath),
         file,
@@ -54,7 +54,7 @@ export async function build(root: string, options: BuildOptions): Promise<void> 
   const resolvedRoot = path.resolve(root)
   const outDir = options.outDir ?? '.revitedocs/dist'
   const base = options.base ?? '/'
-  
+
   console.log(pc.bold(`\n🚀 Building for production in ${resolvedRoot}...`))
   console.log(pc.dim(`   outDir=${outDir}, base=${base}`))
 

@@ -3,7 +3,7 @@
  *
  * Supports:
  * - ```mermaid - Mermaid diagrams
- * 
+ *
  * Note: Container directives (:::) are handled via MDX syntax directly
  */
 
@@ -75,7 +75,7 @@ export function remarkMermaid() {
           .replace(/\\/g, '\\\\')
           .replace(/`/g, '\\`')
           .replace(/\$/g, '\\$')
-        
+
         const jsxNode = createJsxElement('MermaidDiagram', [
           createJsxExpressionAttribute('chart', `\`${escapedChart}\``),
         ])
@@ -89,7 +89,7 @@ export function remarkMermaid() {
 
 /**
  * Remark plugin to transform container directives (:::) to React components
- * 
+ *
  * This works by finding paragraph nodes that contain ::: syntax and transforming them
  */
 export function remarkContainerDirectives() {
@@ -110,17 +110,17 @@ export function remarkContainerDirectives() {
       while (i < tree.children.length) {
         const node = tree.children[i]
         const text = getNodeText(node)
-        
+
         // Check for opening :::
         const openMatch = text.match(/^:::\s*(\w+)(?:\s+(.*))?$/)
         if (openMatch) {
           const directiveType = openMatch[1]
           const directiveTitle = openMatch[2]?.trim()
-          
+
           // Find closing :::
           let endIndex = -1
           const contentNodes: unknown[] = []
-          
+
           for (let j = i + 1; j < tree.children.length; j++) {
             const siblingText = getNodeText(tree.children[j])
             if (siblingText.trim() === ':::') {
@@ -129,7 +129,7 @@ export function remarkContainerDirectives() {
             }
             contentNodes.push(tree.children[j])
           }
-          
+
           if (endIndex !== -1) {
             nodesToProcess.push({
               parent: tree,
@@ -151,7 +151,7 @@ export function remarkContainerDirectives() {
     for (let i = nodesToProcess.length - 1; i >= 0; i--) {
       const block = nodesToProcess[i]
       const jsxNode = createDirectiveElement(block.type, block.title, block.contentNodes)
-      
+
       if (jsxNode) {
         // Remove old nodes and insert JSX element
         const removeCount = block.endIndex - block.startIndex + 1
@@ -166,21 +166,21 @@ export function remarkContainerDirectives() {
  */
 function getNodeText(node: unknown): string {
   if (!node || typeof node !== 'object') return ''
-  
+
   const n = node as { type?: string; value?: string; children?: unknown[] }
-  
+
   if (n.type === 'text' && typeof n.value === 'string') {
     return n.value
   }
-  
+
   if (n.type === 'paragraph' && n.children) {
     return n.children.map(getNodeText).join('')
   }
-  
+
   if (n.children && Array.isArray(n.children)) {
     return n.children.map(getNodeText).join('')
   }
-  
+
   return ''
 }
 
@@ -194,9 +194,7 @@ function createDirectiveElement(
 ): MdxJsxFlowElement | null {
   // Callout types
   if (['info', 'warning', 'tip', 'danger', 'note'].includes(type)) {
-    const attrs: MdxJsxAttribute[] = [
-      { type: 'mdxJsxAttribute', name: 'variant', value: type },
-    ]
+    const attrs: MdxJsxAttribute[] = [{ type: 'mdxJsxAttribute', name: 'variant', value: type }]
     if (title) {
       attrs.push({ type: 'mdxJsxAttribute', name: 'title', value: title })
     }
@@ -208,7 +206,7 @@ function createDirectiveElement(
     return createTabsElement(contentNodes)
   }
 
-  // Steps  
+  // Steps
   if (type === 'steps') {
     return createStepsElement(contentNodes)
   }
@@ -246,12 +244,14 @@ function createTabsElement(contentNodes: unknown[]): MdxJsxFlowElement {
     tabs.push(currentTab)
   }
 
-  const labels = tabs.map(t => t.label)
-  const children = tabs.map(tab => createJsxElement('div', [], tab.content))
+  const labels = tabs.map((t) => t.label)
+  const children = tabs.map((tab) => createJsxElement('div', [], tab.content))
 
-  return createJsxElement('TabGroup', [
-    createJsxExpressionAttribute('labels', JSON.stringify(labels)),
-  ], children)
+  return createJsxElement(
+    'TabGroup',
+    [createJsxExpressionAttribute('labels', JSON.stringify(labels))],
+    children
+  )
 }
 
 /**
@@ -280,9 +280,7 @@ function createStepsElement(contentNodes: unknown[]): MdxJsxFlowElement {
   }
 
   const children = steps.map((step, i) =>
-    createJsxElement('Step', [
-      createJsxExpressionAttribute('number', String(i + 1)),
-    ], step.content)
+    createJsxElement('Step', [createJsxExpressionAttribute('number', String(i + 1))], step.content)
   )
 
   return createJsxElement('Steps', [], children)
@@ -293,10 +291,10 @@ function createStepsElement(contentNodes: unknown[]): MdxJsxFlowElement {
  */
 function createFileTreeElement(contentNodes: unknown[]): MdxJsxFlowElement {
   const items: string[] = []
-  
+
   for (const node of contentNodes) {
     const text = getNodeText(node)
-    const lines = text.split('\n').filter(l => l.trim())
+    const lines = text.split('\n').filter((l) => l.trim())
     for (const line of lines) {
       items.push(line.replace(/^-\s*/, '').trim())
     }
@@ -343,10 +341,7 @@ export function isMermaidCodeBlock(lang: string): boolean {
  * Transform a mermaid code block to MermaidDiagram component JSX
  */
 export function transformMermaidToJsx(code: string): string {
-  const escaped = code
-    .replace(/\\/g, '\\\\')
-    .replace(/`/g, '\\`')
-    .replace(/\$/g, '\\$')
+  const escaped = code.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')
 
   return `<MermaidDiagram chart={\`${escaped}\`} />`
 }

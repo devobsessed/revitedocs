@@ -9,7 +9,9 @@ const RESOLVED_VIRTUAL_ROUTES_ID = '\0' + VIRTUAL_ROUTES_ID
 /**
  * Generate route module that includes frontmatter, toc, rawMarkdown, version, and locale extracted from files
  */
-function generateRouteModuleWithMeta(routes: Array<{ path: string; file: string; version?: string; locale?: string }>): string {
+function generateRouteModuleWithMeta(
+  routes: Array<{ path: string; file: string; version?: string; locale?: string }>
+): string {
   if (routes.length === 0) {
     return `export const routes = [];`
   }
@@ -26,9 +28,7 @@ function generateRouteModuleWithMeta(routes: Array<{ path: string; file: string;
     }
   })
 
-  const imports = routeData
-    .map((r) => `import Page${r.index} from '${r.file}';`)
-    .join('\n')
+  const imports = routeData.map((r) => `import Page${r.index} from '${r.file}';`).join('\n')
 
   const routeObjects = routeData
     .map((r) => {
@@ -36,7 +36,7 @@ function generateRouteModuleWithMeta(routes: Array<{ path: string; file: string;
         r.version ? `version: '${r.version}'` : null,
         r.locale ? `locale: '${r.locale}'` : null,
       ].filter(Boolean)
-      
+
       return `  {
     path: '${r.path}',
     element: Page${r.index},
@@ -75,4 +75,3 @@ export function revitedocsRoutesPlugin(root: string): Plugin {
     },
   }
 }
-

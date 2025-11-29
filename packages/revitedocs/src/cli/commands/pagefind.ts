@@ -21,7 +21,7 @@ export interface PagefindOptions {
  */
 export async function runPagefind(options: PagefindOptions): Promise<boolean> {
   const { site, outputSubdir = 'pagefind', verbose = false } = options
-  
+
   // Check if site directory exists
   if (!fs.existsSync(site)) {
     console.error(pc.red(`✗ Build directory not found: ${site}`))
@@ -42,12 +42,7 @@ export async function runPagefind(options: PagefindOptions): Promise<boolean> {
 
   try {
     // Run Pagefind via npx
-    const command = [
-      'npx',
-      'pagefind',
-      '--site', site,
-      '--output-subdir', outputSubdir,
-    ].join(' ')
+    const command = ['npx', 'pagefind', '--site', site, '--output-subdir', outputSubdir].join(' ')
 
     if (verbose) {
       console.log(pc.dim(`  Running: ${command}`))
@@ -89,10 +84,10 @@ export async function runPagefind(options: PagefindOptions): Promise<boolean> {
  */
 function findHtmlFiles(dir: string, files: string[] = []): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
-  
+
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name)
-    
+
     if (entry.isDirectory()) {
       // Skip pagefind output directory
       if (entry.name !== 'pagefind') {
@@ -102,7 +97,6 @@ function findHtmlFiles(dir: string, files: string[] = []): string[] {
       files.push(fullPath)
     }
   }
-  
+
   return files
 }
-

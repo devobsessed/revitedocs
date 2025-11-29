@@ -38,10 +38,7 @@ const variantMap: Record<BadgeVariant, ShadcnBadgeProps['variant']> = {
  */
 export function Badge({ variant = 'default', children, className }: BadgeProps) {
   return (
-    <ShadcnBadge
-      variant={variantMap[variant]}
-      className={cn('rounded-full', className)}
-    >
+    <ShadcnBadge variant={variantMap[variant]} className={cn('rounded-full', className)}>
       {children}
     </ShadcnBadge>
   )
@@ -59,11 +56,7 @@ export interface VersionBadgeProps {
   className?: string
 }
 
-export function VersionBadge({
-  version,
-  variant = 'primary',
-  className,
-}: VersionBadgeProps) {
+export function VersionBadge({ version, variant = 'primary', className }: VersionBadgeProps) {
   // Ensure version starts with 'v' if it doesn't
   const displayVersion = version.startsWith('v') ? version : `v${version}`
 
@@ -84,10 +77,7 @@ export interface StatusBadgeProps {
   className?: string
 }
 
-const statusConfig: Record<
-  StatusBadgeProps['status'],
-  { label: string; variant: BadgeVariant }
-> = {
+const statusConfig: Record<StatusBadgeProps['status'], { label: string; variant: BadgeVariant }> = {
   stable: { label: 'Stable', variant: 'success' },
   beta: { label: 'Beta', variant: 'warning' },
   alpha: { label: 'Alpha', variant: 'danger' },

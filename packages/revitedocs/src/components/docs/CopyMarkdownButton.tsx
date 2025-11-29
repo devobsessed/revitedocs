@@ -42,19 +42,11 @@ export function CopyMarkdownButton({
       variant="outline"
       size={compact ? 'icon-sm' : 'sm'}
       onClick={handleCopy}
-      className={cn(
-        'gap-1.5',
-        copied && 'text-green-600 dark:text-green-400',
-        className
-      )}
+      className={cn('gap-1.5', copied && 'text-green-600 dark:text-green-400', className)}
       title={copied ? 'Copied!' : label}
       aria-label={label}
     >
-      {copied ? (
-        <Check className="h-4 w-4" />
-      ) : (
-        <Copy className="h-4 w-4" />
-      )}
+      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
       {!compact && <span>{copied ? 'Copied!' : label}</span>}
     </Button>
   )

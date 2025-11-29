@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { fileToUrlPath, generateRoutes, generateRouteModule, detectVersionFromPath, isVersionFolder, isLocaleFolder, detectLocaleFromPath } from './router.js'
+import {
+  fileToUrlPath,
+  generateRoutes,
+  generateRouteModule,
+  detectVersionFromPath,
+  isVersionFolder,
+  isLocaleFolder,
+  detectLocaleFromPath,
+} from './router.js'
 
 // Mock fast-glob
 vi.mock('fast-glob', () => ({
@@ -41,11 +49,7 @@ describe('router', () => {
 
     it('discovers markdown files and generates routes', async () => {
       const fg = (await import('fast-glob')).default
-      vi.mocked(fg).mockResolvedValue([
-        'index.md',
-        'guide/intro.md',
-        'guide/advanced.md',
-      ])
+      vi.mocked(fg).mockResolvedValue(['index.md', 'guide/intro.md', 'guide/advanced.md'])
 
       const routes = await generateRoutes('/docs')
 
@@ -67,11 +71,7 @@ describe('router', () => {
 
     it('ignores private files starting with _', async () => {
       const fg = (await import('fast-glob')).default
-      vi.mocked(fg).mockResolvedValue([
-        'index.md',
-        '_draft.md',
-        'guide/_wip.md',
-      ])
+      vi.mocked(fg).mockResolvedValue(['index.md', '_draft.md', 'guide/_wip.md'])
 
       const routes = await generateRoutes('/docs')
 
@@ -108,19 +108,17 @@ describe('router', () => {
       expect(code).toContain('import')
       expect(code).toContain('/docs/index.md')
       expect(code).toContain('/docs/guide/intro.md')
-      
+
       // Should export routes array
       expect(code).toContain('export const routes')
-      
+
       // Should include path definitions
       expect(code).toContain("path: '/'")
       expect(code).toContain("path: '/guide/intro'")
     })
 
     it('exports frontmatter and toc from each route', () => {
-      const routes = [
-        { path: '/', file: '/docs/index.md' },
-      ]
+      const routes = [{ path: '/', file: '/docs/index.md' }]
 
       const code = generateRouteModule(routes)
 
@@ -189,56 +187,53 @@ describe('router', () => {
       const routes = await generateRoutes('/docs')
 
       // Check v1 routes
-      const v1Index = routes.find(r => r.path === '/v1/')
+      const v1Index = routes.find((r) => r.path === '/v1/')
       expect(v1Index).toBeDefined()
       expect(v1Index?.version).toBe('v1')
-      
-      const v1Guide = routes.find(r => r.path === '/v1/guide/intro')
+
+      const v1Guide = routes.find((r) => r.path === '/v1/guide/intro')
       expect(v1Guide).toBeDefined()
       expect(v1Guide?.version).toBe('v1')
 
       // Check v2 routes
-      const v2Index = routes.find(r => r.path === '/v2/')
+      const v2Index = routes.find((r) => r.path === '/v2/')
       expect(v2Index).toBeDefined()
       expect(v2Index?.version).toBe('v2')
 
-      const v2Advanced = routes.find(r => r.path === '/v2/guide/advanced')
+      const v2Advanced = routes.find((r) => r.path === '/v2/guide/advanced')
       expect(v2Advanced).toBeDefined()
       expect(v2Advanced?.version).toBe('v2')
     })
 
     it('generates non-versioned routes without version prefix', async () => {
       const fg = (await import('fast-glob')).default
-      vi.mocked(fg).mockResolvedValue([
-        'index.md',
-        'guide/intro.md',
-      ])
+      vi.mocked(fg).mockResolvedValue(['index.md', 'guide/intro.md'])
 
       const routes = await generateRoutes('/docs')
 
-      expect(routes.find(r => r.path === '/')?.version).toBeUndefined()
-      expect(routes.find(r => r.path === '/guide/intro')?.version).toBeUndefined()
+      expect(routes.find((r) => r.path === '/')?.version).toBeUndefined()
+      expect(routes.find((r) => r.path === '/guide/intro')?.version).toBeUndefined()
     })
 
     it('handles mixed versioned and non-versioned content', async () => {
       const fg = (await import('fast-glob')).default
       vi.mocked(fg).mockResolvedValue([
-        'index.md',           // Root landing page (unversioned)
-        'v2/index.md',        // Latest docs
+        'index.md', // Root landing page (unversioned)
+        'v2/index.md', // Latest docs
         'v2/guide/intro.md',
-        'v1/index.md',        // Old docs
+        'v1/index.md', // Old docs
         'v1/guide/intro.md',
       ])
 
       const routes = await generateRoutes('/docs')
 
       // Unversioned root
-      const root = routes.find(r => r.path === '/')
+      const root = routes.find((r) => r.path === '/')
       expect(root?.version).toBeUndefined()
 
       // Versioned content
-      expect(routes.filter(r => r.version === 'v1')).toHaveLength(2)
-      expect(routes.filter(r => r.version === 'v2')).toHaveLength(2)
+      expect(routes.filter((r) => r.version === 'v1')).toHaveLength(2)
+      expect(routes.filter((r) => r.version === 'v2')).toHaveLength(2)
     })
   })
 
@@ -267,10 +262,10 @@ describe('router', () => {
     })
 
     it('rejects invalid locale formats', () => {
-      expect(isLocaleFolder('e')).toBe(false)       // Too short
-      expect(isLocaleFolder('eng')).toBe(false)    // Too long without region
+      expect(isLocaleFolder('e')).toBe(false) // Too short
+      expect(isLocaleFolder('eng')).toBe(false) // Too long without region
       expect(isLocaleFolder('en-usa')).toBe(false) // Invalid region format
-      expect(isLocaleFolder('EN_US')).toBe(false)  // Wrong separator
+      expect(isLocaleFolder('EN_US')).toBe(false) // Wrong separator
     })
   })
 
@@ -310,16 +305,16 @@ describe('router', () => {
       const routes = await generateRoutes('/docs')
 
       // Check en routes
-      const enIndex = routes.find(r => r.path === '/en/')
+      const enIndex = routes.find((r) => r.path === '/en/')
       expect(enIndex).toBeDefined()
       expect(enIndex?.locale).toBe('en')
-      
-      const enGuide = routes.find(r => r.path === '/en/guide/intro')
+
+      const enGuide = routes.find((r) => r.path === '/en/guide/intro')
       expect(enGuide).toBeDefined()
       expect(enGuide?.locale).toBe('en')
 
       // Check ja routes
-      const jaIndex = routes.find(r => r.path === '/ja/')
+      const jaIndex = routes.find((r) => r.path === '/ja/')
       expect(jaIndex).toBeDefined()
       expect(jaIndex?.locale).toBe('ja')
     })
@@ -327,7 +322,7 @@ describe('router', () => {
     it('handles mixed localized and non-localized content', async () => {
       const fg = (await import('fast-glob')).default
       vi.mocked(fg).mockResolvedValue([
-        'index.md',           // Root landing page (unlocalized)
+        'index.md', // Root landing page (unlocalized)
         'en/index.md',
         'en/guide/intro.md',
         'ja/index.md',
@@ -336,13 +331,12 @@ describe('router', () => {
       const routes = await generateRoutes('/docs')
 
       // Unlocalized root
-      const root = routes.find(r => r.path === '/')
+      const root = routes.find((r) => r.path === '/')
       expect(root?.locale).toBeUndefined()
 
       // Localized content
-      expect(routes.filter(r => r.locale === 'en')).toHaveLength(2)
-      expect(routes.filter(r => r.locale === 'ja')).toHaveLength(1)
+      expect(routes.filter((r) => r.locale === 'en')).toHaveLength(2)
+      expect(routes.filter((r) => r.locale === 'ja')).toHaveLength(1)
     })
   })
 })
-

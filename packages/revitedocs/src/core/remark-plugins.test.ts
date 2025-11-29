@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { getDocComponentImports, isMermaidCodeBlock, transformMermaidToJsx } from './remark-plugins.js'
+import {
+  getDocComponentImports,
+  isMermaidCodeBlock,
+  transformMermaidToJsx,
+} from './remark-plugins.js'
 
 describe('remark-plugins', () => {
   describe('getDocComponentImports', () => {
@@ -91,4 +95,3 @@ describe('remark-plugins', () => {
     })
   })
 })
-

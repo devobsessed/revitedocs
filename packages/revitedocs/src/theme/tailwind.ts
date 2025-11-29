@@ -1,6 +1,6 @@
 /**
  * Tailwind Configuration Utilities
- * 
+ *
  * Load and merge user's Tailwind config from .revitedocs/ directory
  */
 
@@ -28,7 +28,10 @@ export function getDefaultTailwindConfig(docsRoot: string): TailwindConfig {
     content: [
       path.join(docsRoot, '**/*.{md,mdx,tsx,jsx}'),
       // Include revitedocs package components
-      path.join(path.dirname(import.meta.url.replace('file://', '')), '../components/**/*.{js,tsx}'),
+      path.join(
+        path.dirname(import.meta.url.replace('file://', '')),
+        '../components/**/*.{js,tsx}'
+      ),
     ],
     theme: {
       extend: getTailwindThemeExtension(),
@@ -40,16 +43,13 @@ export function getDefaultTailwindConfig(docsRoot: string): TailwindConfig {
 /**
  * Deep merge two objects, with source values overwriting target values
  */
-export function deepMerge<T extends Record<string, unknown>>(
-  target: T,
-  source: Partial<T>
-): T {
+export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
   const result = { ...target }
-  
+
   for (const key of Object.keys(source) as Array<keyof T>) {
     const sourceValue = source[key]
     const targetValue = target[key]
-    
+
     if (
       sourceValue !== null &&
       typeof sourceValue === 'object' &&
@@ -66,7 +66,7 @@ export function deepMerge<T extends Record<string, unknown>>(
       result[key] = sourceValue as T[keyof T]
     }
   }
-  
+
   return result
 }
 
@@ -79,13 +79,13 @@ export function getUserTailwindConfigPath(docsRoot: string): string | null {
     path.join(docsRoot, '.revitedocs', 'tailwind.config.ts'),
     path.join(docsRoot, '.revitedocs', 'tailwind.config.mjs'),
   ]
-  
+
   for (const configPath of possiblePaths) {
     if (fs.existsSync(configPath)) {
       return configPath
     }
   }
-  
+
   return null
 }
 
@@ -93,15 +93,13 @@ export function getUserTailwindConfigPath(docsRoot: string): string | null {
  * Load user's Tailwind config from .revitedocs/ directory
  * Returns null if no config file exists
  */
-export async function loadUserTailwindConfig(
-  docsRoot: string
-): Promise<TailwindConfig | null> {
+export async function loadUserTailwindConfig(docsRoot: string): Promise<TailwindConfig | null> {
   const configPath = getUserTailwindConfigPath(docsRoot)
-  
+
   if (!configPath) {
     return null
   }
-  
+
   try {
     // Dynamic import to load the config
     const userConfig = await import(configPath)
@@ -126,20 +124,20 @@ export function mergeTailwindConfig(
   if (!userConfig) {
     return defaultConfig
   }
-  
+
   // Start with default config
   const merged: TailwindConfig = { ...defaultConfig }
-  
+
   // Merge content arrays
   if (userConfig.content) {
     merged.content = [...(defaultConfig.content || []), ...userConfig.content]
   }
-  
+
   // Merge plugins arrays
   if (userConfig.plugins) {
     merged.plugins = [...(defaultConfig.plugins || []), ...userConfig.plugins]
   }
-  
+
   // Deep merge theme.extend
   if (userConfig.theme) {
     merged.theme = {
@@ -151,19 +149,19 @@ export function mergeTailwindConfig(
       ),
     }
   }
-  
+
   // Override darkMode if user specifies it
   if (userConfig.darkMode !== undefined) {
     merged.darkMode = userConfig.darkMode
   }
-  
+
   // Copy any other top-level keys from user config
   for (const key of Object.keys(userConfig)) {
     if (!['content', 'plugins', 'theme', 'darkMode'].includes(key)) {
       merged[key] = userConfig[key]
     }
   }
-  
+
   return merged
 }
 
@@ -176,4 +174,3 @@ export async function getTailwindConfig(docsRoot: string): Promise<TailwindConfi
   const userConfig = await loadUserTailwindConfig(docsRoot)
   return mergeTailwindConfig(defaultConfig, userConfig)
 }
-

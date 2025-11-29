@@ -193,7 +193,7 @@ describe('build command', () => {
       const { loadConfig } = await import('../../core/config.js')
       const { generateLlmsTxt } = await import('../../core/llms.js')
       const fg = await import('fast-glob')
-      
+
       vi.mocked(loadConfig).mockResolvedValue({
         ...mockConfig,
         llms: { enabled: true },

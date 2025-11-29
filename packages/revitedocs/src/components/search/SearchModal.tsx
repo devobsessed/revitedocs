@@ -150,9 +150,7 @@ export function SearchModal({
 
         {/* Error state */}
         {state.error && (
-          <div className="py-6 text-center text-sm text-destructive">
-            {state.error}
-          </div>
+          <div className="py-6 text-center text-sm text-destructive">{state.error}</div>
         )}
 
         {/* Empty state */}
@@ -160,9 +158,7 @@ export function SearchModal({
           state.query.trim() &&
           state.results.length === 0 &&
           searchReady &&
-          !state.error && (
-            <CommandEmpty>No results found for "{state.query}"</CommandEmpty>
-          )}
+          !state.error && <CommandEmpty>No results found for "{state.query}"</CommandEmpty>}
 
         {/* Recent searches (when no query) */}
         {!state.query.trim() && recentSearches.length > 0 && (
@@ -184,9 +180,7 @@ export function SearchModal({
         {/* Search results */}
         {state.results.length > 0 && (
           <>
-            {recentSearches.length > 0 && !state.query.trim() && (
-              <CommandSeparator />
-            )}
+            {recentSearches.length > 0 && !state.query.trim() && <CommandSeparator />}
             <CommandGroup heading="Results">
               {state.results.map((result) => (
                 <CommandItem
@@ -199,9 +193,7 @@ export function SearchModal({
                   <div className="flex-1 min-w-0">
                     <div className="font-medium">{result.title}</div>
                     {result.section && (
-                      <div className="text-xs text-muted-foreground mt-0.5">
-                        {result.section}
-                      </div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{result.section}</div>
                     )}
                     <div
                       className={cn(
@@ -214,10 +206,7 @@ export function SearchModal({
                       dangerouslySetInnerHTML={{
                         __html:
                           result.excerpt ||
-                          highlightMatches(
-                            result.content?.slice(0, 150) || '',
-                            state.query
-                          ),
+                          highlightMatches(result.content?.slice(0, 150) || '', state.query),
                       }}
                     />
                   </div>

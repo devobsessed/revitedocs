@@ -28,14 +28,14 @@ describe('vite-plugin', () => {
       it('resolves virtual:revitedocs/config', () => {
         const plugin = revitedocsConfigPlugin(mockConfig)
         const resolveId = plugin.resolveId as (id: string) => string | undefined
-        
+
         expect(resolveId('virtual:revitedocs/config')).toBe('\0virtual:revitedocs/config')
       })
 
       it('ignores other module IDs', () => {
         const plugin = revitedocsConfigPlugin(mockConfig)
         const resolveId = plugin.resolveId as (id: string) => string | undefined
-        
+
         expect(resolveId('some-other-module')).toBeUndefined()
         expect(resolveId('virtual:other')).toBeUndefined()
       })
@@ -45,9 +45,9 @@ describe('vite-plugin', () => {
       it('returns config as JSON module', () => {
         const plugin = revitedocsConfigPlugin(mockConfig)
         const load = plugin.load as (id: string) => string | undefined
-        
+
         const result = load('\0virtual:revitedocs/config')
-        
+
         expect(result).toContain('export default')
         expect(result).toContain('"title": "Test Docs"')
         expect(result).toContain('"description": "Test description"')
@@ -57,9 +57,9 @@ describe('vite-plugin', () => {
       it('excludes root from client config', () => {
         const plugin = revitedocsConfigPlugin(mockConfig)
         const load = plugin.load as (id: string) => string | undefined
-        
+
         const result = load('\0virtual:revitedocs/config')
-        
+
         expect(result).not.toContain('/test/root')
         expect(result).not.toContain('"root"')
       })
@@ -67,10 +67,9 @@ describe('vite-plugin', () => {
       it('ignores other module IDs', () => {
         const plugin = revitedocsConfigPlugin(mockConfig)
         const load = plugin.load as (id: string) => string | undefined
-        
+
         expect(load('some-other-module')).toBeUndefined()
       })
     })
   })
 })
-

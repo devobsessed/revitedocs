@@ -8,10 +8,12 @@ program
   .option('--port <port>', 'Port number', { default: 3000 })
   .option('--open', 'Open browser on startup')
   .option('--host', 'Expose to network')
-  .action(async (root: string | undefined, options: { port: number; open?: boolean; host?: boolean }) => {
-    const { dev } = await import('./commands/dev.js')
-    await dev(root || '.', options)
-  })
+  .action(
+    async (root: string | undefined, options: { port: number; open?: boolean; host?: boolean }) => {
+      const { dev } = await import('./commands/dev.js')
+      await dev(root || '.', options)
+    }
+  )
 
 program
   .command('build [root]', 'Build for production (SSG)')
@@ -22,10 +24,23 @@ program
   .option('--skip-llms', 'Skip llms.txt generation')
   .option('--skip-sitemap', 'Skip sitemap.xml generation')
   .option('--site-url <url>', 'Base URL for sitemap (e.g., https://docs.example.com)')
-  .action(async (root: string | undefined, options: { outDir?: string; base?: string; skipSSG?: boolean; skipSearch?: boolean; skipLlms?: boolean; skipSitemap?: boolean; siteUrl?: string }) => {
-    const { build } = await import('./commands/build.js')
-    await build(root || '.', options)
-  })
+  .action(
+    async (
+      root: string | undefined,
+      options: {
+        outDir?: string
+        base?: string
+        skipSSG?: boolean
+        skipSearch?: boolean
+        skipLlms?: boolean
+        skipSitemap?: boolean
+        siteUrl?: string
+      }
+    ) => {
+      const { build } = await import('./commands/build.js')
+      await build(root || '.', options)
+    }
+  )
 
 program
   .command('preview [root]', 'Preview production build')
@@ -36,12 +51,10 @@ program
     await preview(root || '.', options)
   })
 
-program
-  .command('init', 'Initialize a new revitedocs project')
-  .action(async () => {
-    const { init } = await import('./commands/init.js')
-    await init()
-  })
+program.command('init', 'Initialize a new revitedocs project').action(async () => {
+  const { init } = await import('./commands/init.js')
+  await init()
+})
 
 program.help()
 program.version('0.0.1')
@@ -49,4 +62,3 @@ program.version('0.0.1')
 export function cli(args: string[]) {
   program.parse(['node', 'revitedocs', ...args])
 }
-

@@ -9,7 +9,7 @@ export interface PreviewOptions {
 export async function preview(root: string, options: PreviewOptions): Promise<void> {
   const resolvedRoot = path.resolve(root)
   const outDir = options.outDir ?? '.revitedocs/dist'
-  
+
   console.log(`Previewing build in ${resolvedRoot}...`)
   console.log(`Options: port=${options.port}, outDir=${outDir}`)
 

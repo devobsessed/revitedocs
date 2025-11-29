@@ -9,4 +9,3 @@ export {
   type SidebarSection,
   type SearchFn,
 } from './DocsApp.js'
-

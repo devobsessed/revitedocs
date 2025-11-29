@@ -148,13 +148,10 @@ export function resolveConfig(root: string, userConfig: UserConfig): ResolvedCon
 export async function loadConfig(root: string): Promise<ResolvedConfig> {
   const resolvedRoot = path.resolve(root)
   const configPath = path.join(resolvedRoot, '.revitedocs', 'config.ts')
-  
+
   try {
-    const result = await loadConfigFromFile(
-      { command: 'serve', mode: 'development' },
-      configPath
-    )
-    
+    const result = await loadConfigFromFile({ command: 'serve', mode: 'development' }, configPath)
+
     const userConfig = result?.config ?? {}
     return resolveConfig(resolvedRoot, userConfig as UserConfig)
   } catch (error) {
@@ -172,10 +169,9 @@ export function formatConfigError(error: ZodError): string {
   return error.errors
     .map((err) => {
       const pathStr = err.path
-        .map((p, i) => (typeof p === 'number' ? `[${p}]` : (i === 0 ? p : `.${p}`)))
+        .map((p, i) => (typeof p === 'number' ? `[${p}]` : i === 0 ? p : `.${p}`))
         .join('')
       return `  - ${pathStr}: ${err.message}`
     })
     .join('\n')
 }
-

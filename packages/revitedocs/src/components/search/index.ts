@@ -26,4 +26,3 @@ export type {
   SearchProviderProps,
   SearchState,
 } from './types.js'
-

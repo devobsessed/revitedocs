@@ -95,7 +95,7 @@ describe('vite-plugin-slots', () => {
 
         const result = await load('\0virtual:revitedocs/theme/Header')
 
-        expect(result).toContain("export { default } from")
+        expect(result).toContain('export { default } from')
         expect(result).toContain('.revitedocs/theme/Header.tsx')
       })
 
@@ -182,4 +182,3 @@ describe('vite-plugin-slots', () => {
     })
   })
 })
-

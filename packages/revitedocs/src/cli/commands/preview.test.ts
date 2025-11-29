@@ -60,4 +60,3 @@ describe('preview command', () => {
     })
   })
 })
-

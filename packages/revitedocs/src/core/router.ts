@@ -51,7 +51,7 @@ export function detectLocaleFromPath(filePath: string): string | null {
 
 /**
  * Convert a file path to a URL path
- * 
+ *
  * Examples:
  * - guide.md → /guide
  * - guide/intro.md → /guide/intro
@@ -65,21 +65,21 @@ export function fileToUrlPath(filePath: string): string {
     .replace(/\.mdx?$/, '')
     // Handle README as index
     .replace(/README$/i, 'index')
-  
+
   // Ensure leading slash first
   if (!urlPath.startsWith('/')) {
     urlPath = '/' + urlPath
   }
-  
+
   // Handle index files - they map to directory paths
   if (urlPath === '/index') {
     return '/'
   }
-  
+
   if (urlPath.endsWith('/index')) {
     return urlPath.replace(/index$/, '')
   }
-  
+
   return urlPath
 }
 
@@ -93,8 +93,8 @@ export async function generateRoutes(root: string): Promise<Route[]> {
   })
 
   return files
-    .filter(file => !path.basename(file).startsWith('_'))
-    .map(file => {
+    .filter((file) => !path.basename(file).startsWith('_'))
+    .map((file) => {
       const version = detectVersionFromPath(file)
       const locale = detectLocaleFromPath(file)
       const route: Route = {

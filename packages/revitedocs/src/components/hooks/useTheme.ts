@@ -35,7 +35,7 @@ export function useTheme(): UseThemeReturn {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       const stored = localStorage.getItem('revitedocs-theme')
       if (!stored) {
@@ -57,4 +57,3 @@ export function useTheme(): UseThemeReturn {
 
   return { theme, setTheme, toggleTheme }
 }
-

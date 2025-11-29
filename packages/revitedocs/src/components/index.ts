@@ -1,8 +1,17 @@
 // Layout components
 export { Layout, type LayoutProps } from './layout/Layout.js'
 export { Header, type HeaderProps, type NavItem } from './layout/Header.js'
-export { Sidebar, type SidebarProps, type SidebarSection, type SidebarItem } from './layout/Sidebar.js'
-export { TableOfContents, type TableOfContentsProps, type TocItem } from './layout/TableOfContents.js'
+export {
+  Sidebar,
+  type SidebarProps,
+  type SidebarSection,
+  type SidebarItem,
+} from './layout/Sidebar.js'
+export {
+  TableOfContents,
+  type TableOfContentsProps,
+  type TocItem,
+} from './layout/TableOfContents.js'
 export { PageWrapper, type PageWrapperProps } from './layout/PageWrapper.js'
 export {
   VersionSwitcher,

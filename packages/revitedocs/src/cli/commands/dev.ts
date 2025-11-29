@@ -1,28 +1,25 @@
-import mdx from "@mdx-js/rollup";
-import react from "@vitejs/plugin-react";
-import fs from "node:fs";
-import { createRequire } from "node:module";
-import path from "node:path";
-import rehypeSlug from "rehype-slug";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkGfm from "remark-gfm";
-import { createServer, type Plugin } from "vite";
-import { loadConfig } from "../../core/config.js";
-import {
-  remarkContainerDirectives,
-  remarkMermaid,
-} from "../../core/remark-plugins.js";
-import { revitedocsRoutesPlugin } from "../../core/vite-plugin-routes.js";
-import { revitedocsSearchPlugin } from "../../core/vite-plugin-search.js";
-import { revitedocsConfigPlugin } from "../../core/vite-plugin.js";
+import mdx from '@mdx-js/rollup'
+import react from '@vitejs/plugin-react'
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import rehypeSlug from 'rehype-slug'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
+import { createServer, type Plugin } from 'vite'
+import { loadConfig } from '../../core/config.js'
+import { remarkContainerDirectives, remarkMermaid } from '../../core/remark-plugins.js'
+import { revitedocsRoutesPlugin } from '../../core/vite-plugin-routes.js'
+import { revitedocsSearchPlugin } from '../../core/vite-plugin-search.js'
+import { revitedocsConfigPlugin } from '../../core/vite-plugin.js'
 
 // Create require to resolve dependencies from revitedocs's location
-const require = createRequire(import.meta.url);
+const require = createRequire(import.meta.url)
 
 export interface DevOptions {
-  port: number;
-  open?: boolean;
-  host?: boolean;
+  port: number
+  open?: boolean
+  host?: boolean
 }
 
 /**
@@ -30,32 +27,29 @@ export interface DevOptions {
  */
 function revitedocsEntryPlugin(): Plugin {
   return {
-    name: "revitedocs:entry",
+    name: 'revitedocs:entry',
     configureServer(server) {
       // Watch for new/deleted markdown files to regenerate routes
-      server.watcher.on("add", (file) => {
-        if (file.endsWith(".md") || file.endsWith(".mdx")) {
-          console.log(`\n📄 New file detected: ${path.basename(file)}`);
-          server.restart();
+      server.watcher.on('add', (file) => {
+        if (file.endsWith('.md') || file.endsWith('.mdx')) {
+          console.log(`\n📄 New file detected: ${path.basename(file)}`)
+          server.restart()
         }
-      });
-      server.watcher.on("unlink", (file) => {
-        if (file.endsWith(".md") || file.endsWith(".mdx")) {
-          console.log(`\n🗑️  File removed: ${path.basename(file)}`);
-          server.restart();
+      })
+      server.watcher.on('unlink', (file) => {
+        if (file.endsWith('.md') || file.endsWith('.mdx')) {
+          console.log(`\n🗑️  File removed: ${path.basename(file)}`)
+          server.restart()
         }
-      });
+      })
     },
     resolveId(id) {
-      if (
-        id === "/.revitedocs/entry.js" ||
-        id.endsWith(".revitedocs/entry.js")
-      ) {
-        return "\0revitedocs-entry";
+      if (id === '/.revitedocs/entry.js' || id.endsWith('.revitedocs/entry.js')) {
+        return '\0revitedocs-entry'
       }
     },
     load(id) {
-      if (id === "\0revitedocs-entry") {
+      if (id === '\0revitedocs-entry') {
         return `
 import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -99,10 +93,10 @@ document.addEventListener('click', (e) => {
 window.addEventListener('popstate', () => {
   root.render(createElement(DocsApp, { routes, config, search }))
 })
-`;
+`
       }
     },
-  };
+  }
 }
 
 function createIndexHtml(title: string): string {
@@ -155,24 +149,22 @@ function createIndexHtml(title: string): string {
     <div id="app"></div>
     <script type="module" src="/.revitedocs/entry.js"></script>
   </body>
-</html>`;
+</html>`
 }
 
 export async function dev(root: string, options: DevOptions): Promise<void> {
-  const resolvedRoot = path.resolve(root);
+  const resolvedRoot = path.resolve(root)
 
-  console.log(`Starting dev server in ${resolvedRoot}...`);
-  console.log(
-    `Options: port=${options.port}, open=${options.open}, host=${options.host}`
-  );
+  console.log(`Starting dev server in ${resolvedRoot}...`)
+  console.log(`Options: port=${options.port}, open=${options.open}, host=${options.host}`)
 
   // Load config
-  const config = await loadConfig(resolvedRoot);
+  const config = await loadConfig(resolvedRoot)
 
   // Write index.html to docs folder
-  const indexPath = path.join(resolvedRoot, "index.html");
-  const indexHtml = createIndexHtml(config.title);
-  fs.writeFileSync(indexPath, indexHtml);
+  const indexPath = path.join(resolvedRoot, 'index.html')
+  const indexHtml = createIndexHtml(config.title)
+  fs.writeFileSync(indexPath, indexHtml)
 
   // Resolve dependencies from revitedocs's installation location using Node's resolution
   // This works regardless of npm hoisting behavior
@@ -180,43 +172,33 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
     try {
       // Use require.resolve to get the actual path where the package is installed
       // Then get the package directory by going up from the resolved entry point
-      const resolved = require.resolve(dep);
+      const resolved = require.resolve(dep)
       // Find the package root by locating node_modules/package-name
-      const nodeModulesIndex = resolved.lastIndexOf("node_modules");
+      const nodeModulesIndex = resolved.lastIndexOf('node_modules')
       if (nodeModulesIndex === -1) {
-        return resolved;
+        return resolved
       }
       // Get everything up to and including the package name (handles scoped packages too)
-      const afterNodeModules = resolved.slice(
-        nodeModulesIndex + "node_modules/".length
-      );
-      const packageName = afterNodeModules.startsWith("@")
-        ? afterNodeModules.split("/").slice(0, 2).join("/")
-        : afterNodeModules.split("/")[0];
-      return (
-        resolved.slice(0, nodeModulesIndex + "node_modules/".length) +
-        packageName
-      );
+      const afterNodeModules = resolved.slice(nodeModulesIndex + 'node_modules/'.length)
+      const packageName = afterNodeModules.startsWith('@')
+        ? afterNodeModules.split('/').slice(0, 2).join('/')
+        : afterNodeModules.split('/')[0]
+      return resolved.slice(0, nodeModulesIndex + 'node_modules/'.length) + packageName
     } catch {
-      return dep; // Fall back to bare specifier if resolution fails
+      return dep // Fall back to bare specifier if resolution fails
     }
-  };
+  }
 
   const server = await createServer({
     root: resolvedRoot,
     plugins: [
       // MDX plugin must come before React plugin
       {
-        enforce: "pre",
+        enforce: 'pre',
         ...mdx({
-          remarkPlugins: [
-            remarkGfm,
-            remarkFrontmatter,
-            remarkContainerDirectives,
-            remarkMermaid,
-          ],
+          remarkPlugins: [remarkGfm, remarkFrontmatter, remarkContainerDirectives, remarkMermaid],
           rehypePlugins: [rehypeSlug],
-          providerImportSource: "@mdx-js/react",
+          providerImportSource: '@mdx-js/react',
         }),
       },
       react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
@@ -231,30 +213,30 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
       host: options.host,
     },
     optimizeDeps: {
-      include: ["react", "react-dom", "@mdx-js/react", "mermaid"],
+      include: ['react', 'react-dom', '@mdx-js/react', 'mermaid'],
     },
     resolve: {
-      dedupe: ["react", "react-dom", "@mdx-js/react", "mermaid"],
+      dedupe: ['react', 'react-dom', '@mdx-js/react', 'mermaid'],
       alias: {
         // Resolve React and other deps from revitedocs's installation using Node resolution
-        react: resolveDep("react"),
-        "react-dom": resolveDep("react-dom"),
-        "@mdx-js/react": resolveDep("@mdx-js/react"),
-        mermaid: resolveDep("mermaid"),
+        react: resolveDep('react'),
+        'react-dom': resolveDep('react-dom'),
+        '@mdx-js/react': resolveDep('@mdx-js/react'),
+        mermaid: resolveDep('mermaid'),
       },
     },
-  });
+  })
 
-  await server.listen();
-  server.printUrls();
+  await server.listen()
+  server.printUrls()
 
   // Cleanup on exit
-  process.on("SIGINT", () => {
+  process.on('SIGINT', () => {
     try {
-      fs.unlinkSync(indexPath);
+      fs.unlinkSync(indexPath)
     } catch {
       /* ignore cleanup errors */
     }
-    process.exit();
-  });
+    process.exit()
+  })
 }

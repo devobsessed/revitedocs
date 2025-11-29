@@ -65,9 +65,7 @@ function SidebarItemComponent({
           className="w-full justify-between text-muted-foreground hover:text-foreground"
         >
           <span>{item.text}</span>
-          <ChevronRight
-            className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
-          />
+          <ChevronRight className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')} />
         </Button>
         {isExpanded && (
           <div className="ml-3 space-y-1">
@@ -93,9 +91,7 @@ function SidebarItemComponent({
       className={cn(
         'block rounded-md px-3 py-2 text-sm transition-colors',
         'hover:bg-accent hover:text-accent-foreground',
-        isActive
-          ? 'bg-primary/10 text-primary font-medium'
-          : 'text-muted-foreground'
+        isActive ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground'
       )}
     >
       {item.text}

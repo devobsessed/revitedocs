@@ -101,9 +101,7 @@ export function CodeBlock({
                 <span className="font-mono">{filename}</span>
               </>
             ) : (
-              <span className="font-mono text-xs uppercase tracking-wider">
-                {language}
-              </span>
+              <span className="font-mono text-xs uppercase tracking-wider">{language}</span>
             )}
           </div>
         </div>
@@ -130,18 +128,13 @@ export function CodeBlock({
                     return (
                       <tr
                         key={index}
-                        className={cn(
-                          'leading-6',
-                          isHighlighted && 'bg-yellow-500/10'
-                        )}
+                        className={cn('leading-6', isHighlighted && 'bg-yellow-500/10')}
                       >
                         {showLineNumbers && (
                           <td
                             className={cn(
                               'select-none pr-4 text-right w-8',
-                              isHighlighted
-                                ? 'text-yellow-500'
-                                : 'text-zinc-600'
+                              isHighlighted ? 'text-yellow-500' : 'text-zinc-600'
                             )}
                             aria-hidden="true"
                           >
@@ -151,9 +144,7 @@ export function CodeBlock({
                         <td
                           className={cn(
                             'whitespace-pre',
-                            isHighlighted &&
-                              !showLineNumbers &&
-                              'border-l-2 border-yellow-500 pl-2'
+                            isHighlighted && !showLineNumbers && 'border-l-2 border-yellow-500 pl-2'
                           )}
                         >
                           {line || ' '}
@@ -191,4 +182,3 @@ export function CodeBlock({
     </div>
   )
 }
-
