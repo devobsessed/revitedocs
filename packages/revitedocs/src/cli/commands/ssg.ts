@@ -113,6 +113,7 @@ function writeCssEntry(revitedocsDir: string): string {
 .top-14 { top: 3.5rem; }
 .top-16 { top: 4rem; }
 .left-0 { left: 0; }
+.right-0 { right: 0; }
 .right-4 { right: 1rem; }
 .z-30 { z-index: 30; }
 .z-40 { z-index: 40; }
@@ -439,7 +440,7 @@ function writeCssEntry(revitedocsDir: string): string {
 
 /* Header beam effect */
 .header-beam {
-  position: relative;
+  /* position: relative removed - conflicts with fixed header */
 }
 
 .header-beam::after {
@@ -638,9 +639,9 @@ export function render(routePath) {
   // Build static HTML structure for SSR - MUST match DocsApp.tsx exactly to avoid hydration errors
   const appHtml = renderToString(
     createElement('div', { className: 'min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100' },
-      // Header - matches DocsApp.tsx
+      // Header - matches DocsApp.tsx (uses fixed positioning with spacer div)
       createElement('header', { 
-        className: 'sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60'
+        className: 'fixed top-0 left-0 right-0 z-50 h-14 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60 header-beam'
       },
         createElement('div', { className: 'flex h-14 items-center px-4 md:px-6' },
           createElement('div', { className: 'flex items-center gap-2' },
@@ -680,6 +681,8 @@ export function render(routePath) {
           )
         )
       ),
+      // Spacer for fixed header - matches DocsApp.tsx
+      createElement('div', { className: 'h-14' }),
       // Main layout
       createElement('div', { className: 'flex' },
         // Sidebar - matches DocsApp.tsx
@@ -908,7 +911,7 @@ function create404Page(
 
   const notFoundContent = `
     <div class="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
-      <header class="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur">
+      <header class="fixed top-0 left-0 right-0 z-50 h-14 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur header-beam">
         <div class="flex h-14 items-center px-4 md:px-6">
           <a href="${normalizedBase}/" class="flex items-center gap-2">
             <div class="h-8 w-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold">
@@ -918,6 +921,7 @@ function create404Page(
           </a>
         </div>
       </header>
+      <div class="h-14"></div>
       <main class="flex items-center justify-center" style="min-height: calc(100vh - 3.5rem);">
         <div class="text-center p-8">
           <h1 class="text-6xl font-bold text-zinc-300 dark:text-zinc-700 mb-4">404</h1>
