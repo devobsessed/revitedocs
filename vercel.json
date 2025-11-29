@@ -1,6 +1,0 @@
-{
-  "buildCommand": "npm run build:lib && npm run build:docs",
-  "outputDirectory": "docs/.revitedocs/dist",
-  "installCommand": "npm install"
-}
-
