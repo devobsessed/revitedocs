@@ -55,7 +55,7 @@ export interface SSGOptions {
 }
 
 /**
- * Create the build index.html that references a real entry file
+ * Create the build index.html that references entry files
  */
 function createBuildIndexHtml(title: string): string {
   return `<!DOCTYPE html>
@@ -64,33 +64,22 @@ function createBuildIndexHtml(title: string): string {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
+    <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <div id="app"><!--app-html--></div>
-    <script type="module" src="/.revitedocs/entry-client.js"></script>
+    <script type="module" src="./entry-client.js"></script>
   </body>
 </html>`;
 }
 
 /**
- * Create virtual CSS entry plugin for Tailwind processing
+ * Create CSS entry file with Tailwind source configuration
+ * Writes to physical file so Tailwind can scan for classes
  */
-function createCssEntryPlugin(): Plugin {
-  return {
-    name: "revitedocs:css-entry",
-    resolveId(id) {
-      if (
-        id === "/.revitedocs/styles.css" ||
-        id.endsWith(".revitedocs/styles.css")
-      ) {
-        // Use .css extension to ensure proper CSS handling
-        return "\0revitedocs-styles.css";
-      }
-    },
-    load(id) {
-      if (id === "\0revitedocs-styles.css") {
-        // Tailwind v4 uses @import "tailwindcss" syntax
-        return `@import "tailwindcss";
+function writeCssEntry(revitedocsDir: string): string {
+  const cssContent = `@import "tailwindcss";
+@source "./entry-client.js";
 
 /* Prose styles for markdown content */
 .prose h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
@@ -113,9 +102,18 @@ function createCssEntryPlugin(): Plugin {
 .dark .prose a { color: #60a5fa; }
 .dark .prose blockquote { border-color: #60a5fa; color: #9ca3af; }
 `;
-      }
-    },
-  };
+  const cssPath = path.join(revitedocsDir, "styles.css");
+  fs.writeFileSync(cssPath, cssContent);
+  return cssPath;
+}
+
+/**
+ * Write client entry code to a physical file for Tailwind to scan
+ */
+function writeClientEntry(revitedocsDir: string): string {
+  const entryPath = path.join(revitedocsDir, "entry-client.js");
+  fs.writeFileSync(entryPath, generateClientEntryCode());
+  return entryPath;
 }
 
 /**
@@ -123,7 +121,7 @@ function createCssEntryPlugin(): Plugin {
  */
 function generateClientEntryCode(): string {
   return `
-import '/.revitedocs/styles.css'
+import './styles.css'
 import { createElement, useState, useEffect } from 'react'
 import { hydrateRoot, createRoot } from 'react-dom/client'
 import { MDXProvider } from '@mdx-js/react'
@@ -390,28 +388,6 @@ document.addEventListener('click', (e) => {
   }
 })
 `;
-}
-
-/**
- * Create client entry plugin for build
- */
-function createClientEntryPlugin(): Plugin {
-  return {
-    name: "revitedocs:client-entry",
-    resolveId(id) {
-      if (
-        id === "/.revitedocs/entry-client.js" ||
-        id.endsWith(".revitedocs/entry-client.js")
-      ) {
-        return "\0revitedocs-client-entry";
-      }
-    },
-    load(id) {
-      if (id === "\0revitedocs-client-entry") {
-        return generateClientEntryCode();
-      }
-    },
-  };
 }
 
 /**
@@ -785,10 +761,16 @@ export async function buildSSG(
     fs.mkdirSync(revitedocsDir, { recursive: true });
   }
 
-  // Write build index.html in .revitedocs folder
+  // Write build files to .revitedocs folder
   const indexPath = path.join(revitedocsDir, "index.html");
   const buildIndexHtml = createBuildIndexHtml(config.title);
   fs.writeFileSync(indexPath, buildIndexHtml);
+
+  // Write client entry to physical file for Tailwind to scan
+  writeClientEntry(revitedocsDir);
+
+  // Write CSS entry with @source pointing to client entry
+  writeCssEntry(revitedocsDir);
 
   try {
     // Step 1: Build client bundle
@@ -798,7 +780,6 @@ export async function buildSSG(
       base,
       plugins: [
         tailwindcss(),
-        createCssEntryPlugin(),
         {
           enforce: "pre",
           ...mdx({
@@ -815,7 +796,6 @@ export async function buildSSG(
         react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
         revitedocsConfigPlugin(config),
         revitedocsRoutesPlugin(rootDir),
-        createClientEntryPlugin(),
         createBuildSearchPlugin(),
       ],
       build: {
@@ -979,9 +959,11 @@ export async function buildSSG(
     fs.rmSync(distServerPath, { recursive: true, force: true });
     console.log(pc.green("  ✓ Cleanup complete"));
   } finally {
-    // Remove the temporary build index.html from .revitedocs
+    // Remove the temporary build files from .revitedocs
     try {
       fs.unlinkSync(indexPath);
+      fs.unlinkSync(path.join(revitedocsDir, "entry-client.js"));
+      fs.unlinkSync(path.join(revitedocsDir, "styles.css"));
     } catch {
       /* ignore cleanup errors */
     }
