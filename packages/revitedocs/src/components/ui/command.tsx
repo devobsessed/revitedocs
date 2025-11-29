@@ -24,13 +24,15 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0 gap-0">
-        <Command className={cn(
-          '[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground',
-          '[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2',
-          '[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5',
-          '[&_[cmdk-input]]:h-12',
-          '[&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5'
-        )}>
+        <Command
+          className={cn(
+            '[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground',
+            '[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2',
+            '[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5',
+            '[&_[cmdk-input]]:h-12',
+            '[&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5'
+          )}
+        >
           {children}
         </Command>
       </DialogContent>
@@ -42,12 +44,12 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div 
+  <div
     className={cn(
       'flex items-center px-4 py-1',
       'border-b border-zinc-200/50 dark:border-zinc-800/50',
       'bg-zinc-50/30 dark:bg-zinc-900/30'
-    )} 
+    )}
     cmdk-input-wrapper=""
   >
     <Search className="mr-3 h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />

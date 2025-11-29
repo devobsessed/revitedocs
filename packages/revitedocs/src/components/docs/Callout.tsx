@@ -115,18 +115,20 @@ export function Callout({ variant = 'info', title, children, className }: Callou
         'transition-all duration-200',
         'hover:shadow-[0_2px_8px_-4px_rgba(0,0,0,0.1)]',
         'dark:hover:shadow-[0_2px_8px_-4px_rgba(255,255,255,0.03)]',
-        config.containerClass, 
+        config.containerClass,
         className
       )}
       role="alert"
       aria-label={displayTitle}
     >
       <div className="flex items-start gap-3">
-        <div className={cn(
-          'flex h-7 w-7 items-center justify-center rounded-lg shrink-0 mt-0.5',
-          'transition-transform duration-200',
-          config.iconContainerClass
-        )}>
+        <div
+          className={cn(
+            'flex h-7 w-7 items-center justify-center rounded-lg shrink-0 mt-0.5',
+            'transition-transform duration-200',
+            config.iconContainerClass
+          )}
+        >
           <Icon className={cn('h-4 w-4', config.iconClass)} aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">

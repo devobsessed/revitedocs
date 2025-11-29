@@ -73,10 +73,10 @@ export function Header({
         'div',
         { className: 'mr-4 flex items-center space-x-2.5 group' },
         logo
-          ? createElement('img', { 
-              src: logo, 
-              alt: '', 
-              className: 'h-8 w-8 transition-transform duration-300 group-hover:scale-105' 
+          ? createElement('img', {
+              src: logo,
+              alt: '',
+              className: 'h-8 w-8 transition-transform duration-300 group-hover:scale-105',
             })
           : createElement(
               'div',
@@ -96,8 +96,8 @@ export function Header({
               title.charAt(0).toUpperCase()
             ),
         createElement(
-          'span', 
-          { className: 'font-semibold tracking-tight text-zinc-900 dark:text-zinc-100' }, 
+          'span',
+          { className: 'font-semibold tracking-tight text-zinc-900 dark:text-zinc-100' },
           title
         )
       ),
@@ -157,11 +157,7 @@ export function Header({
             ),
           },
           createElement(Search, { className: 'h-4 w-4 mr-2 opacity-60' }),
-          createElement(
-            'span', 
-            { className: 'hidden md:inline text-sm' }, 
-            'Search...'
-          ),
+          createElement('span', { className: 'hidden md:inline text-sm' }, 'Search...'),
           createElement(
             'kbd',
             {
@@ -194,11 +190,11 @@ export function Header({
           'aria-label': 'Toggle theme',
         },
         theme === 'dark'
-          ? createElement(Sun, { 
-              className: 'h-[18px] w-[18px] transition-transform duration-300 hover:rotate-45' 
+          ? createElement(Sun, {
+              className: 'h-[18px] w-[18px] transition-transform duration-300 hover:rotate-45',
             })
-          : createElement(Moon, { 
-              className: 'h-[18px] w-[18px] transition-transform duration-300 hover:-rotate-12' 
+          : createElement(Moon, {
+              className: 'h-[18px] w-[18px] transition-transform duration-300 hover:-rotate-12',
             })
       )
     )

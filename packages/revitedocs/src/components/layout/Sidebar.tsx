@@ -71,15 +71,15 @@ function SidebarItemComponent({
           )}
         >
           <span className="font-medium">{item.text}</span>
-          <ChevronRight 
+          <ChevronRight
             className={cn(
               'h-4 w-4 text-zinc-400 dark:text-zinc-500',
               'transition-transform duration-200 ease-out',
               isExpanded && 'rotate-90'
-            )} 
+            )}
           />
         </Button>
-        <div 
+        <div
           className={cn(
             'ml-3 space-y-0.5 overflow-hidden',
             'transition-all duration-300 ease-out',
@@ -127,7 +127,7 @@ function SidebarItemComponent({
           'relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2',
           'before:h-5 before:w-0.5 before:rounded-full',
           'before:bg-zinc-400 dark:before:bg-zinc-500',
-          'shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]'
+          'shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',
         ],
         // Press effect
         'active:scale-[0.99]'
@@ -202,12 +202,12 @@ export function Sidebar({
 
           {/* Navigation sections */}
           {sections.map((section, sectionIndex) => (
-            <div 
+            <div
               key={section.title}
               className="animate-[fade-in_0.3s_ease-out_forwards] opacity-0"
               style={{ animationDelay: `${sectionIndex * 50}ms` }}
             >
-              <h3 
+              <h3
                 className={cn(
                   'mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider',
                   'text-zinc-400 dark:text-zinc-500'

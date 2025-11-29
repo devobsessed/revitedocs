@@ -31,15 +31,11 @@ export interface CardProps {
 export function Card({ title, description, href, icon, className, children }: CardProps) {
   const cardContent = (
     <ShadcnCard
-      className={cn(
-        'group relative overflow-hidden',
-        href && 'cursor-pointer',
-        className
-      )}
+      className={cn('group relative overflow-hidden', href && 'cursor-pointer', className)}
     >
       {/* Subtle gradient overlay on hover */}
       {href && (
-        <div 
+        <div
           className={cn(
             'absolute inset-0 opacity-0 group-hover:opacity-100',
             'bg-gradient-to-br from-primary/[0.02] to-transparent',
@@ -52,7 +48,7 @@ export function Card({ title, description, href, icon, className, children }: Ca
       <CardHeader className="pb-2 relative">
         {/* Icon with glow effect */}
         {icon && (
-          <div 
+          <div
             className={cn(
               'mb-3 flex h-10 w-10 items-center justify-center rounded-xl',
               'bg-zinc-100 dark:bg-zinc-800/80',
@@ -68,7 +64,7 @@ export function Card({ title, description, href, icon, className, children }: Ca
             {icon}
           </div>
         )}
-        <CardTitle 
+        <CardTitle
           className={cn(
             'text-base font-semibold',
             'text-zinc-900 dark:text-zinc-100',
@@ -108,8 +104,8 @@ export function Card({ title, description, href, icon, className, children }: Ca
 
   if (href) {
     return (
-      <a 
-        href={href} 
+      <a
+        href={href}
         className={cn(
           'block no-underline',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',

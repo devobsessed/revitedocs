@@ -90,7 +90,7 @@ export function CodeBlock({
   const hasHighlighting = highlightedLineSet.size > 0
 
   return (
-    <div 
+    <div
       className={cn(
         'not-prose group relative my-6',
         // Subtle shadow
@@ -106,11 +106,13 @@ export function CodeBlock({
     >
       {/* Header with filename or language */}
       {(filename || language) && (
-        <div className={cn(
-          'flex items-center justify-between px-4 py-2.5',
-          'bg-zinc-900 dark:bg-zinc-800',
-          'border-b border-zinc-800/50 dark:border-zinc-700/50'
-        )}>
+        <div
+          className={cn(
+            'flex items-center justify-between px-4 py-2.5',
+            'bg-zinc-900 dark:bg-zinc-800',
+            'border-b border-zinc-800/50 dark:border-zinc-700/50'
+          )}
+        >
           <div className="flex items-center gap-2 text-sm text-zinc-400">
             {filename ? (
               <>
@@ -118,7 +120,9 @@ export function CodeBlock({
                 <span className="font-mono text-zinc-300">{filename}</span>
               </>
             ) : (
-              <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">{language}</span>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+                {language}
+              </span>
             )}
           </div>
         </div>
@@ -165,7 +169,9 @@ export function CodeBlock({
                         <td
                           className={cn(
                             'whitespace-pre',
-                            isHighlighted && !showLineNumbers && 'border-l-2 border-zinc-500 pl-3 -ml-1'
+                            isHighlighted &&
+                              !showLineNumbers &&
+                              'border-l-2 border-zinc-500 pl-3 -ml-1'
                           )}
                         >
                           {line || ' '}

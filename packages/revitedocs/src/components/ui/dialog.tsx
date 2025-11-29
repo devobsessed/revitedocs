@@ -65,7 +65,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close 
+      <DialogPrimitive.Close
         className={cn(
           'absolute right-4 top-4 rounded-lg p-1',
           'text-zinc-400 dark:text-zinc-500',
