@@ -31,14 +31,27 @@ function slugify(text: string): string {
 }
 
 /**
+ * Strip code blocks from markdown content to avoid false positives
+ */
+function stripCodeBlocks(content: string): string {
+  // Remove fenced code blocks (```...``` or ~~~...~~~)
+  let stripped = content.replace(/^(`{3,}|~{3,})[\s\S]*?^\1/gm, '')
+  // Remove indented code blocks (4 spaces or 1 tab at start of line)
+  stripped = stripped.replace(/^(?: {4}|\t).*$/gm, '')
+  return stripped
+}
+
+/**
  * Extract table of contents from markdown headings
  */
 function extractToc(content: string): TocItem[] {
+  // Strip code blocks first to avoid picking up # comments in code
+  const strippedContent = stripCodeBlocks(content)
   const headingRegex = /^(#{1,6})\s+(.+)$/gm
   const toc: TocItem[] = []
   let match
 
-  while ((match = headingRegex.exec(content)) !== null) {
+  while ((match = headingRegex.exec(strippedContent)) !== null) {
     const depth = match[1].length
     const text = match[2].trim()
     const id = slugify(text)
