@@ -1,6 +1,6 @@
 ---
 title: What is ReviteDocs?
-description: A VitePress-style documentation generator built with Vite and React
+description: A modern documentation generator built with Vite and React
 ---
 
 ReviteDocs is a modern documentation generator that combines the simplicity of markdown with the power of React components. Built on Vite for lightning-fast development and optimized production builds.
@@ -32,13 +32,11 @@ npm run dev
 
 ## Why ReviteDocs?
 
-| Feature | ReviteDocs | VitePress | Docusaurus |
-|---------|------------|-----------|------------|
-| Framework | React | Vue | React |
-| Build Tool | Vite | Vite | Webpack |
-| Markdown | MDX | Markdown | MDX |
-| Search | Pagefind | MiniSearch | Algolia |
-| Bundle Size | ~50KB | ~40KB | ~200KB |
+- **React-based** - Build with the ecosystem you know
+- **Blazing fast** - Powered by Vite for instant dev and optimized builds
+- **MDX support** - Use React components directly in markdown
+- **Offline search** - Built-in Pagefind for fast, client-side search
+- **Lightweight** - ~50KB bundle, no heavy dependencies
 
 ## Get Started
 

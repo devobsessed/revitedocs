@@ -80,10 +80,154 @@ function createBuildIndexHtml(title: string): string {
 function writeCssEntry(revitedocsDir: string): string {
   const cssContent = `@import "tailwindcss";
 @source "./entry-client.js";
-@source "../../../node_modules/revitedocs/dist/**/*.js";
+@source "../../packages/revitedocs/src/**/*.tsx";
+@source "../../packages/revitedocs/dist/**/*.js";
 
 /* Enable class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================================
+   Essential Layout Utilities (for SSG builds)
+   ============================================================================ */
+
+/* Display */
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.hidden { display: none; }
+.block { display: block; }
+.grid { display: grid; }
+
+/* Flexbox */
+.flex-1 { flex: 1 1 0%; }
+.flex-shrink-0 { flex-shrink: 0; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.space-y-1 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem; }
+.space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
+
+/* Position */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+.top-0 { top: 0; }
+.top-14 { top: 3.5rem; }
+.top-16 { top: 4rem; }
+.left-0 { left: 0; }
+.right-4 { right: 1rem; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+.inset-0 { inset: 0; }
+
+/* Sizing */
+.h-4 { height: 1rem; }
+.h-5 { height: 1.25rem; }
+.h-8 { height: 2rem; }
+.h-9 { height: 2.25rem; }
+.h-14 { height: 3.5rem; }
+.h-\\[calc\\(100vh-3\\.5rem\\)\\] { height: calc(100vh - 3.5rem); }
+.w-4 { width: 1rem; }
+.w-5 { width: 1.25rem; }
+.w-8 { width: 2rem; }
+.w-9 { width: 2.25rem; }
+.w-52 { width: 13rem; }
+.w-64 { width: 16rem; }
+.w-full { width: 100%; }
+.min-h-screen { min-height: 100vh; }
+.min-w-0 { min-width: 0; }
+.max-w-none { max-width: none; }
+.max-h-\\[calc\\(100vh-5rem\\)\\] { max-height: calc(100vh - 5rem); }
+
+/* Spacing */
+.p-4 { padding: 1rem; }
+.p-8 { padding: 2rem; }
+.px-1\\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-0\\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.pt-6 { padding-top: 1.5rem; }
+.pl-3 { padding-left: 0.75rem; }
+.m-0 { margin: 0; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.ml-4 { margin-left: 1rem; }
+.mr-2 { margin-right: 0.5rem; }
+.mt-1 { margin-top: 0.25rem; }
+.-ml-px { margin-left: -1px; }
+
+/* Typography */
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; }
+.tracking-wider { letter-spacing: 0.05em; }
+.whitespace-nowrap { white-space: nowrap; }
+
+/* Borders */
+.border { border-width: 1px; }
+.border-b { border-bottom-width: 1px; }
+.border-l { border-left-width: 1px; }
+.border-r { border-right-width: 1px; }
+.border-transparent { border-color: transparent; }
+.rounded { border-radius: 0.25rem; }
+.rounded-md { border-radius: 0.375rem; }
+.rounded-lg { border-radius: 0.5rem; }
+
+/* Effects */
+.shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+.backdrop-blur { backdrop-filter: blur(8px); }
+.backdrop-blur-sm { backdrop-filter: blur(4px); }
+.overflow-y-auto { overflow-y: auto; }
+.overflow-x-auto { overflow-x: auto; }
+.transition-colors { transition-property: color, background-color, border-color; transition-duration: 150ms; }
+
+/* Responsive - md (768px) */
+@media (min-width: 768px) {
+  .md\\:flex { display: flex; }
+  .md\\:block { display: block; }
+  .md\\:hidden { display: none; }
+  .md\\:inline { display: inline; }
+  .md\\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .md\\:px-8 { padding-left: 2rem; padding-right: 2rem; }
+  .md\\:ml-64 { margin-left: 16rem; }
+}
+
+/* Responsive - lg (1024px) */
+@media (min-width: 1024px) {
+  .lg\\:block { display: block; }
+  .lg\\:hidden { display: none; }
+  .lg\\:mr-56 { margin-right: 14rem; }
+}
+
+/* Responsive - sm (640px) */
+@media (min-width: 640px) {
+  .sm\\:inline { display: inline; }
+}
+
+/* Special classes */
+.not-prose { --tw-prose-body: initial; --tw-prose-headings: initial; }
+.\\[\\&_svg\\]\\:pointer-events-none svg { pointer-events: none; }
+.\\[\\&_svg\\]\\:size-4 svg { width: 1rem; height: 1rem; }
+.\\[\\&_svg\\]\\:shrink-0 svg { flex-shrink: 0; }
+.disabled\\:pointer-events-none:disabled { pointer-events: none; }
+.disabled\\:opacity-50:disabled { opacity: 0.5; }
+.focus-visible\\:outline-none:focus-visible { outline: none; }
+.focus-visible\\:ring-1:focus-visible { box-shadow: 0 0 0 1px var(--tw-ring-color); }
 
 /* ============================================================================
    shadcn/ui CSS Variables
@@ -200,6 +344,15 @@ function writeCssEntry(revitedocsDir: string): string {
    Zinc color utilities (explicit for SSG builds)
    ============================================================================ */
 
+/* White backgrounds (base) */
+.bg-white { background-color: rgb(255 255 255); }
+.bg-white\\/95 { background-color: rgb(255 255 255 / 0.95); }
+.bg-white\\/80 { background-color: rgb(255 255 255 / 0.80); }
+.bg-white\\/60 { background-color: rgb(255 255 255 / 0.60); }
+@supports ((-webkit-backdrop-filter: blur(0)) or (backdrop-filter: blur(0))) {
+  .supports-\\[backdrop-filter\\]\\:bg-white\\/60 { background-color: rgb(255 255 255 / 0.60); }
+}
+
 /* Zinc backgrounds */
 .bg-zinc-50 { background-color: rgb(250 250 250); }
 .bg-zinc-100 { background-color: rgb(244 244 245); }
@@ -208,6 +361,9 @@ function writeCssEntry(revitedocsDir: string): string {
 .bg-zinc-800 { background-color: rgb(39 39 42); }
 .bg-zinc-900 { background-color: rgb(24 24 27); }
 .bg-zinc-950 { background-color: rgb(9 9 11); }
+
+/* White text */
+.text-white { color: rgb(255 255 255); }
 
 /* Zinc text */
 .text-zinc-50 { color: rgb(250 250 250); }
@@ -223,14 +379,17 @@ function writeCssEntry(revitedocsDir: string): string {
 .border-zinc-800 { border-color: rgb(39 39 42); }
 
 /* Dark mode zinc variants */
+.dark\\:bg-zinc-100:is(.dark *) { background-color: rgb(244 244 245); }
 .dark\\:bg-zinc-700:is(.dark *) { background-color: rgb(63 63 70); }
 .dark\\:bg-zinc-800:is(.dark *) { background-color: rgb(39 39 42); }
 .dark\\:bg-zinc-900:is(.dark *) { background-color: rgb(24 24 27); }
 .dark\\:bg-zinc-950:is(.dark *) { background-color: rgb(9 9 11); }
 .dark\\:bg-zinc-950\\/95:is(.dark *) { background-color: rgb(9 9 11 / 0.95); }
+.dark\\:bg-zinc-950\\/80:is(.dark *) { background-color: rgb(9 9 11 / 0.80); }
 .dark\\:text-zinc-50:is(.dark *) { color: rgb(250 250 250); }
 .dark\\:text-zinc-100:is(.dark *) { color: rgb(244 244 245); }
 .dark\\:text-zinc-400:is(.dark *) { color: rgb(161 161 170); }
+.dark\\:text-zinc-900:is(.dark *) { color: rgb(24 24 27); }
 .dark\\:border-zinc-700:is(.dark *) { border-color: rgb(63 63 70); }
 .dark\\:border-zinc-800:is(.dark *) { border-color: rgb(39 39 42); }
 
