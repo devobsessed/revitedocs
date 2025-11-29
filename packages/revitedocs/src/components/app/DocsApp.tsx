@@ -284,7 +284,7 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60">
+      <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60 header-beam">
         <div className="flex h-14 items-center px-4 md:px-6">
           {/* Mobile menu button */}
           <Button
@@ -345,6 +345,9 @@ export function DocsApp({ routes, config, search, ssr = false }: DocsAppProps) {
           </nav>
         </div>
       </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-14" />
 
       <div className="flex">
         {/* Sidebar */}

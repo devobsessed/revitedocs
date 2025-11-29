@@ -89,7 +89,12 @@ export function Layout({
     'div',
     {
       className: cn(
-        'min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100',
+        'min-h-screen',
+        // Subtle gradient background
+        'bg-gradient-to-b from-zinc-50 via-white to-white',
+        'dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900/50',
+        // Subtle noise texture effect (optional via CSS)
+        'text-zinc-900 dark:text-zinc-100',
         className
       ),
     },
@@ -155,10 +160,15 @@ export function Layout({
         )
     ),
 
-    // Mobile sidebar overlay
+    // Mobile sidebar overlay - refined with blur
     sidebarOpen &&
       createElement('div', {
-        className: 'fixed inset-0 z-30 bg-black/50 md:hidden',
+        className: cn(
+          'fixed inset-0 z-30 md:hidden',
+          'bg-zinc-950/40 dark:bg-zinc-950/60',
+          'backdrop-blur-sm',
+          'animate-[fade-in_0.2s_ease-out]'
+        ),
         onClick: () => setSidebarOpen(false),
       })
   )

@@ -1,8 +1,27 @@
 import mdx from '@mdx-js/rollup'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Find the package root (where package.json is)
+const findPackageRoot = () => {
+  let dir = __dirname
+  while (dir !== path.dirname(dir)) {
+    if (fs.existsSync(path.join(dir, 'package.json'))) {
+      return dir
+    }
+    dir = path.dirname(dir)
+  }
+  return __dirname
+}
+const packageRoot = findPackageRoot()
 import rehypeSlug from 'rehype-slug'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
@@ -58,6 +77,9 @@ import config from 'virtual:revitedocs/config'
 import { search } from 'virtual:revitedocs/search'
 import { DocsApp } from 'revitedocs/components'
 
+// Import ReviteDocs theme CSS
+import 'revitedocs/theme/globals.css'
+
 // Render the app
 const root = createRoot(document.getElementById('app'))
 root.render(createElement(DocsApp, { routes, config, search }))
@@ -106,10 +128,6 @@ function createIndexHtml(title: string): string {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = { darkMode: 'class' }
-    </script>
     <script>
       // Set theme before page renders to prevent FOUC
       (function() {
@@ -143,6 +161,7 @@ function createIndexHtml(title: string): string {
       .dark .prose th, .dark article th { background: #1f2937; }
       .prose tbody tr:nth-child(even), article tbody tr:nth-child(even) { background: rgba(243,244,246,0.5); }
       .dark .prose tbody tr:nth-child(even), .dark article tbody tr:nth-child(even) { background: rgba(31,41,55,0.5); }
+      
     </style>
   </head>
   <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
@@ -192,6 +211,8 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
   const server = await createServer({
     root: resolvedRoot,
     plugins: [
+      // Tailwind CSS v4 plugin
+      tailwindcss(),
       // MDX plugin must come before React plugin
       {
         enforce: 'pre',
@@ -223,6 +244,9 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
         'react-dom': resolveDep('react-dom'),
         '@mdx-js/react': resolveDep('@mdx-js/react'),
         mermaid: resolveDep('mermaid'),
+        // In dev mode, use SOURCE files instead of built dist for HMR
+        'revitedocs/components': path.join(packageRoot, 'src/components/index.ts'),
+        'revitedocs/theme/globals.css': path.join(packageRoot, 'src/theme/globals.css'),
       },
     },
   })

@@ -426,6 +426,49 @@ function writeCssEntry(revitedocsDir: string): string {
 .prose th, .prose td, article th, article td { border: 1px solid hsl(var(--border)); padding: 0.5rem 0.75rem; text-align: left; }
 .prose th, article th { background: hsl(var(--muted)); font-weight: 600; }
 .prose tbody tr:nth-child(even), article tbody tr:nth-child(even) { background: hsl(var(--muted) / 0.3); }
+
+/* ============================================================================
+   Premium Polish - Animations & Effects
+   ============================================================================ */
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Header beam effect */
+.header-beam {
+  position: relative;
+}
+
+.header-beam::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, transparent 35%, rgba(80,80,80,0.8) 50%, transparent 65%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+
+.dark .header-beam::after,
+.header-beam:is(.dark *)::after {
+  background: linear-gradient(90deg, transparent 0%, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%, transparent 100%);
+  background-size: 200% 100%;
+}
+
+/* Glass morphism support */
+.backdrop-blur-xl { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+.backdrop-saturate-150 { backdrop-filter: saturate(1.5); -webkit-backdrop-filter: saturate(1.5); }
+
+/* Fade in animation for sidebar sections */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 `
   const cssPath = path.join(revitedocsDir, 'styles.css')
   fs.writeFileSync(cssPath, cssContent)

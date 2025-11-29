@@ -90,18 +90,35 @@ export function CodeBlock({
   const hasHighlighting = highlightedLineSet.size > 0
 
   return (
-    <div className={cn('not-prose group relative my-4', className)}>
+    <div 
+      className={cn(
+        'not-prose group relative my-6',
+        // Subtle shadow
+        'shadow-[0_2px_12px_-4px_rgba(0,0,0,0.15)]',
+        'dark:shadow-[0_2px_12px_-4px_rgba(0,0,0,0.4)]',
+        // Transition for hover
+        'transition-shadow duration-300',
+        'hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.2)]',
+        'dark:hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)]',
+        'rounded-xl overflow-hidden',
+        className
+      )}
+    >
       {/* Header with filename or language */}
       {(filename || language) && (
-        <div className="flex items-center justify-between rounded-t-lg border border-b-0 border-zinc-700 bg-zinc-900 px-4 py-2 dark:bg-zinc-800">
+        <div className={cn(
+          'flex items-center justify-between px-4 py-2.5',
+          'bg-zinc-900 dark:bg-zinc-800',
+          'border-b border-zinc-800/50 dark:border-zinc-700/50'
+        )}>
           <div className="flex items-center gap-2 text-sm text-zinc-400">
             {filename ? (
               <>
-                <FileCode className="h-4 w-4" aria-hidden="true" />
-                <span className="font-mono">{filename}</span>
+                <FileCode className="h-4 w-4 text-zinc-500" aria-hidden="true" />
+                <span className="font-mono text-zinc-300">{filename}</span>
               </>
             ) : (
-              <span className="font-mono text-xs uppercase tracking-wider">{language}</span>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">{language}</span>
             )}
           </div>
         </div>
@@ -111,13 +128,14 @@ export function CodeBlock({
       <div className="relative">
         <pre
           className={cn(
-            'overflow-x-auto bg-zinc-950 p-4 text-sm dark:bg-zinc-900',
-            filename || language
-              ? 'rounded-b-lg border border-t-0 border-zinc-700'
-              : 'rounded-lg border border-zinc-700'
+            'overflow-x-auto p-4 text-sm',
+            'bg-zinc-950 dark:bg-[#0a0a0a]',
+            // Inset shadow for depth
+            'shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]',
+            !filename && !language && 'rounded-xl'
           )}
         >
-          <code className="font-mono text-zinc-50">
+          <code className="font-mono text-zinc-50 text-[13px] leading-relaxed">
             {showLineNumbers || hasHighlighting ? (
               <table className="w-full border-collapse">
                 <tbody>
@@ -128,13 +146,16 @@ export function CodeBlock({
                     return (
                       <tr
                         key={index}
-                        className={cn('leading-6', isHighlighted && 'bg-yellow-500/10')}
+                        className={cn(
+                          'leading-6 transition-colors duration-150',
+                          isHighlighted && 'bg-zinc-800/50'
+                        )}
                       >
                         {showLineNumbers && (
                           <td
                             className={cn(
-                              'select-none pr-4 text-right w-8',
-                              isHighlighted ? 'text-yellow-500' : 'text-zinc-600'
+                              'select-none pr-4 text-right w-10 tabular-nums',
+                              isHighlighted ? 'text-zinc-400' : 'text-zinc-600'
                             )}
                             aria-hidden="true"
                           >
@@ -144,7 +165,7 @@ export function CodeBlock({
                         <td
                           className={cn(
                             'whitespace-pre',
-                            isHighlighted && !showLineNumbers && 'border-l-2 border-yellow-500 pl-2'
+                            isHighlighted && !showLineNumbers && 'border-l-2 border-zinc-500 pl-3 -ml-1'
                           )}
                         >
                           {line || ' '}
@@ -160,20 +181,26 @@ export function CodeBlock({
           </code>
         </pre>
 
-        {/* Copy button */}
+        {/* Copy button - refined */}
         <button
           onClick={copyToClipboard}
           className={cn(
-            'absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md',
-            'bg-zinc-800 text-zinc-400 transition-all hover:bg-zinc-700 hover:text-zinc-200',
+            'absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg',
+            'bg-zinc-800/80 backdrop-blur-sm',
+            'text-zinc-500',
+            'border border-zinc-700/50',
+            'transition-all duration-200',
+            'hover:bg-zinc-700/90 hover:text-zinc-200 hover:border-zinc-600/50',
             'opacity-0 group-hover:opacity-100 focus:opacity-100',
-            'focus:outline-none focus:ring-2 focus:ring-zinc-600'
+            'focus:outline-none focus:ring-2 focus:ring-zinc-500/50 focus:ring-offset-2 focus:ring-offset-zinc-950',
+            'active:scale-95',
+            copied && 'bg-emerald-900/50 border-emerald-700/50'
           )}
           aria-label={copied ? 'Copied!' : 'Copy code'}
           type="button"
         >
           {copied ? (
-            <Check className="h-4 w-4 text-green-400" aria-hidden="true" />
+            <Check className="h-4 w-4 text-emerald-400" aria-hidden="true" />
           ) : (
             <Copy className="h-4 w-4" aria-hidden="true" />
           )}

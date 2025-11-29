@@ -22,7 +22,8 @@
     "./theme": {
       "types": "./dist/theme/index.d.ts",
       "import": "./dist/theme/index.js"
-    }
+    },
+    "./theme/globals.css": "./src/theme/globals.css"
   },
   "files": [
     "bin",
