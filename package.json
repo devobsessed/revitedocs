@@ -1,0 +1,19 @@
+{
+  "name": "revitedocs-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "docs"
+  ],
+  "scripts": {
+    "build:lib": "npm run build --workspace=revitedocs",
+    "build:docs": "npm run build --workspace=revitedocs-docs",
+    "build": "npm run build:lib && npm run build:docs",
+    "dev": "npm run dev --workspace=revitedocs-docs",
+    "dev:lib": "npm run dev --workspace=revitedocs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

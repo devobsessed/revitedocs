@@ -9,6 +9,6 @@
     "preview": "revitedocs preview"
   },
   "dependencies": {
-    "revitedocs": "file:../packages/revitedocs"
+    "revitedocs": "*"
   }
 }
