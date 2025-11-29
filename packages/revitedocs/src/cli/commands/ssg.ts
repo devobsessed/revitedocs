@@ -377,34 +377,34 @@ export function render(routePath) {
   const Page = route.element
   const sidebarSections = getSidebarForPath(routePath, config.theme?.sidebar)
   
-  // Build static HTML structure for SSR (no hooks/client interactivity)
+  // Build static HTML structure for SSR - MUST match DocsApp.tsx exactly to avoid hydration errors
   const appHtml = renderToString(
-    createElement('div', { className: 'min-h-screen bg-background' },
-      // Header
+    createElement('div', { className: 'min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100' },
+      // Header - matches DocsApp.tsx
       createElement('header', { 
-        className: 'sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'
+        className: 'sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60'
       },
         createElement('div', { className: 'flex h-14 items-center px-4 md:px-6' },
           createElement('div', { className: 'flex items-center gap-2' },
             createElement('div', { 
-              className: 'h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold'
+              className: 'h-8 w-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold'
             }, config.title?.[0] || 'D'),
             createElement('span', { className: 'font-semibold hidden sm:inline' }, config.title || 'Documentation')
           ),
           createElement('div', { className: 'flex-1' }),
           // Search button placeholder
           createElement('button', {
-            className: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3 mr-2 text-muted-foreground'
+            className: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 h-8 px-3 mr-2 text-zinc-500 dark:text-zinc-400'
           },
             createElement('svg', { className: 'h-4 w-4 mr-2', fill: 'none', viewBox: '0 0 24 24', stroke: 'currentColor' },
               createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' })
             ),
             createElement('span', { className: 'hidden md:inline' }, 'Search...'),
-            createElement('kbd', { className: 'hidden md:inline ml-4 px-1.5 py-0.5 text-xs rounded bg-muted' }, '⌘K')
+            createElement('kbd', { className: 'hidden md:inline ml-4 px-1.5 py-0.5 text-xs rounded bg-zinc-200 dark:bg-zinc-700' }, '⌘K')
           ),
           // Theme toggle placeholder
           createElement('button', {
-            className: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground h-9 w-9'
+            className: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 w-9'
           },
             createElement('svg', { className: 'h-5 w-5', fill: 'none', viewBox: '0 0 24 24', stroke: 'currentColor' },
               createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z' })
@@ -416,7 +416,7 @@ export function render(routePath) {
               createElement('a', { 
                 key: i,
                 href: item.link, 
-                className: 'text-sm text-muted-foreground hover:text-foreground transition-colors'
+                className: 'text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors'
               }, item.text)
             )
           )
@@ -424,23 +424,23 @@ export function render(routePath) {
       ),
       // Main layout
       createElement('div', { className: 'flex' },
-        // Sidebar
+        // Sidebar - matches DocsApp.tsx
         createElement('aside', { 
-          className: 'hidden md:block fixed top-14 left-0 z-40 h-[calc(100vh-3.5rem)] w-64 border-r bg-background overflow-y-auto'
+          className: 'hidden md:block fixed top-14 left-0 z-40 h-[calc(100vh-3.5rem)] w-64 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-y-auto'
         },
           createElement('nav', { className: 'p-4 pt-6 space-y-6' },
             ...sidebarSections.map((section, i) => 
               createElement('div', { key: i },
                 createElement('h3', { 
-                  className: 'mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground'
+                  className: 'mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400'
                 }, section.text),
                 createElement('div', { className: 'space-y-1' },
                   ...(section.items || []).map((item, j) =>
                     createElement('a', {
                       key: j,
                       href: item.link,
-                      className: 'block rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ' + 
-                        (routePath === item.link ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground')
+                      className: 'block rounded-md px-3 py-2 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ' + 
+                        (routePath === item.link ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium' : 'text-zinc-600 dark:text-zinc-400')
                     }, item.text)
                   )
                 )
@@ -448,9 +448,9 @@ export function render(routePath) {
             )
           )
         ),
-        // Content
+        // Content - matches DocsApp.tsx
         createElement('main', { 
-          className: 'flex-1 min-w-0 px-4 md:px-8 py-8 md:ml-64 ' + (route.toc?.length > 0 ? 'lg:mr-56' : '')
+          className: 'flex-1 min-w-0 px-4 md:px-8 py-8 md:ml-64 bg-white dark:bg-zinc-950 ' + (route.toc?.length > 0 ? 'lg:mr-56' : '')
         },
           createElement('article', { className: 'prose dark:prose-invert max-w-none' },
             // Page header
@@ -472,17 +472,17 @@ export function render(routePath) {
             )
           )
         ),
-        // TOC
+        // TOC - matches DocsApp.tsx
         route.toc?.length > 0 && createElement('aside', {
           className: 'hidden lg:block fixed right-4 top-16 w-52 max-h-[calc(100vh-5rem)] overflow-y-auto py-4'
         },
           createElement('p', { className: 'text-sm font-semibold mb-3' }, 'On this page'),
-          createElement('ul', { className: 'space-y-2 text-sm border-l border-border' },
+          createElement('ul', { className: 'space-y-2 text-sm border-l border-zinc-200 dark:border-zinc-800' },
             ...route.toc.map((item, i) =>
               createElement('li', { key: i, className: 'pl-3 -ml-px' },
                 createElement('a', {
                   href: '#' + item.id,
-                  className: 'block transition-colors text-muted-foreground hover:text-foreground'
+                  className: 'block transition-colors text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
                 }, item.text)
               )
             )
