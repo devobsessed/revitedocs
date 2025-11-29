@@ -80,6 +80,7 @@ function createBuildIndexHtml(title: string): string {
 function writeCssEntry(revitedocsDir: string): string {
   const cssContent = `@import "tailwindcss";
 @source "./entry-client.js";
+@source "../../../node_modules/revitedocs/dist/**/*.js";
 
 /* Enable class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -194,6 +195,64 @@ function writeCssEntry(revitedocsDir: string): string {
 /* Data state variants (for Radix UI) */
 [data-state="open"].data-\\[state\\=open\\]\\:bg-accent { background-color: hsl(var(--accent)); }
 [data-state="open"].data-\\[state\\=open\\]\\:text-muted-foreground { color: hsl(var(--muted-foreground)); }
+
+/* ============================================================================
+   Zinc color utilities (explicit for SSG builds)
+   ============================================================================ */
+
+/* Zinc backgrounds */
+.bg-zinc-50 { background-color: rgb(250 250 250); }
+.bg-zinc-100 { background-color: rgb(244 244 245); }
+.bg-zinc-200 { background-color: rgb(228 228 231); }
+.bg-zinc-700 { background-color: rgb(63 63 70); }
+.bg-zinc-800 { background-color: rgb(39 39 42); }
+.bg-zinc-900 { background-color: rgb(24 24 27); }
+.bg-zinc-950 { background-color: rgb(9 9 11); }
+
+/* Zinc text */
+.text-zinc-50 { color: rgb(250 250 250); }
+.text-zinc-100 { color: rgb(244 244 245); }
+.text-zinc-400 { color: rgb(161 161 170); }
+.text-zinc-500 { color: rgb(113 113 122); }
+.text-zinc-600 { color: rgb(82 82 91); }
+.text-zinc-900 { color: rgb(24 24 27); }
+
+/* Zinc borders */
+.border-zinc-200 { border-color: rgb(228 228 231); }
+.border-zinc-700 { border-color: rgb(63 63 70); }
+.border-zinc-800 { border-color: rgb(39 39 42); }
+
+/* Dark mode zinc variants */
+.dark\\:bg-zinc-700:is(.dark *) { background-color: rgb(63 63 70); }
+.dark\\:bg-zinc-800:is(.dark *) { background-color: rgb(39 39 42); }
+.dark\\:bg-zinc-900:is(.dark *) { background-color: rgb(24 24 27); }
+.dark\\:bg-zinc-950:is(.dark *) { background-color: rgb(9 9 11); }
+.dark\\:bg-zinc-950\\/95:is(.dark *) { background-color: rgb(9 9 11 / 0.95); }
+.dark\\:text-zinc-50:is(.dark *) { color: rgb(250 250 250); }
+.dark\\:text-zinc-100:is(.dark *) { color: rgb(244 244 245); }
+.dark\\:text-zinc-400:is(.dark *) { color: rgb(161 161 170); }
+.dark\\:border-zinc-700:is(.dark *) { border-color: rgb(63 63 70); }
+.dark\\:border-zinc-800:is(.dark *) { border-color: rgb(39 39 42); }
+
+/* Hover states for zinc */
+.hover\\:bg-zinc-100:hover { background-color: rgb(244 244 245); }
+.hover\\:bg-zinc-800:hover { background-color: rgb(39 39 42); }
+.dark\\:hover\\:bg-zinc-800:is(.dark *):hover { background-color: rgb(39 39 42); }
+.hover\\:text-zinc-900:hover { color: rgb(24 24 27); }
+.dark\\:hover\\:text-zinc-100:is(.dark *):hover { color: rgb(244 244 245); }
+
+/* Green for copy button success state */
+.bg-green-500 { background-color: rgb(34 197 94); }
+.hover\\:bg-green-600:hover { background-color: rgb(22 163 74); }
+
+/* Backdrop filter support */
+.bg-zinc-50\\/95 { background-color: rgb(250 250 250 / 0.95); }
+.bg-zinc-50\\/60 { background-color: rgb(250 250 250 / 0.6); }
+.dark\\:bg-zinc-950\\/60:is(.dark *) { background-color: rgb(9 9 11 / 0.6); }
+@supports (backdrop-filter: blur(0)) {
+  .supports-\\[backdrop-filter\\]\\:bg-zinc-50\\/60 { background-color: rgb(250 250 250 / 0.6); }
+  .dark\\:supports-\\[backdrop-filter\\]\\:bg-zinc-950\\/60:is(.dark *) { background-color: rgb(9 9 11 / 0.6); }
+}
 
 /* ============================================================================
    Prose styles for markdown content 
