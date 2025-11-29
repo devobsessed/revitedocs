@@ -64,13 +64,15 @@ function slugify(text: string): string {
 }
 
 /**
- * Strip code blocks from markdown content to avoid false positives
+ * Strip code blocks and container directives from markdown content to avoid false positives
  */
 function stripCodeBlocks(content: string): string {
   // Remove fenced code blocks (```...``` or ~~~...~~~)
   let stripped = content.replace(/^(`{3,}|~{3,})[\s\S]*?^\1/gm, '')
   // Remove indented code blocks (4 spaces or 1 tab at start of line)
   stripped = stripped.replace(/^(?: {4}|\t).*$/gm, '')
+  // Remove container directives (::: type ... :::) - headings inside these are component content, not doc sections
+  stripped = stripped.replace(/^:::\s*\w+[\s\S]*?^:::/gm, '')
   return stripped
 }
 
@@ -82,12 +84,19 @@ export function extractToc(content: string): TocItem[] {
   const strippedContent = stripCodeBlocks(content)
   const headingRegex = /^(#{1,6})\s+(.+)$/gm
   const toc: TocItem[] = []
+  const idCounts = new Map<string, number>()
   let match
 
   while ((match = headingRegex.exec(strippedContent)) !== null) {
     const depth = match[1].length
     const text = match[2].trim()
-    const id = slugify(text)
+    const baseId = slugify(text)
+    
+    // Make IDs unique by appending -1, -2, etc. for duplicates
+    // This matches rehype-slug's behavior
+    const count = idCounts.get(baseId) || 0
+    const id = count === 0 ? baseId : `${baseId}-${count}`
+    idCounts.set(baseId, count + 1)
 
     toc.push({ depth, text, id })
   }
