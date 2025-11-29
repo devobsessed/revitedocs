@@ -1,17 +1,20 @@
-import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
+import react from "@vitejs/plugin-react";
 import fs from "node:fs";
-import path from "node:path";
 import { createRequire } from "node:module";
-import { createServer, type Plugin } from "vite";
-import remarkGfm from "remark-gfm";
-import remarkFrontmatter from "remark-frontmatter";
+import path from "node:path";
 import rehypeSlug from "rehype-slug";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
+import { createServer, type Plugin } from "vite";
 import { loadConfig } from "../../core/config.js";
-import { remarkContainerDirectives, remarkMermaid } from "../../core/remark-plugins.js";
+import {
+  remarkContainerDirectives,
+  remarkMermaid,
+} from "../../core/remark-plugins.js";
 import { revitedocsRoutesPlugin } from "../../core/vite-plugin-routes.js";
-import { revitedocsConfigPlugin } from "../../core/vite-plugin.js";
 import { revitedocsSearchPlugin } from "../../core/vite-plugin-search.js";
+import { revitedocsConfigPlugin } from "../../core/vite-plugin.js";
 
 // Create require to resolve dependencies from revitedocs's location
 const require = createRequire(import.meta.url);
@@ -75,6 +78,20 @@ const mdxComponents = {
   FileTree,
 }
 
+// Get initial theme from localStorage or system preference
+function getInitialTheme() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('revitedocs-theme')
+    if (stored === 'light' || stored === 'dark') {
+      return stored
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark'
+    }
+  }
+  return 'light'
+}
+
 // Detect version from path (e.g., /v2/guide/intro -> 'v2')
 function detectVersion(path) {
   const match = path.match(/^\\/?(v\\d+(?:\\.\\d+)*)/)
@@ -104,7 +121,7 @@ function getSidebarForPath(path, sidebarConfig) {
 function App() {
   const path = window.location.pathname
   const [searchOpen, setSearchOpen] = useState(false)
-  const [theme, setTheme] = useState('light')
+  const [theme, setTheme] = useState(getInitialTheme)
   const [activeId, setActiveId] = useState('')
   
   // Version detection
@@ -131,6 +148,7 @@ function App() {
   // Handle theme toggle
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
+    localStorage.setItem('revitedocs-theme', theme)
   }, [theme])
   
   // Set HTML lang attribute based on locale
@@ -384,6 +402,18 @@ function createIndexHtml(title: string): string {
     <script>
       tailwind.config = { darkMode: 'class' }
     </script>
+    <script>
+      // Set theme before page renders to prevent FOUC
+      (function() {
+        var theme = localStorage.getItem('revitedocs-theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <style>
       .prose h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
       .prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
@@ -431,36 +461,41 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
       // Then get the package directory by going up from the resolved entry point
       const resolved = require.resolve(dep);
       // Find the package root by locating node_modules/package-name
-      const nodeModulesIndex = resolved.lastIndexOf('node_modules');
+      const nodeModulesIndex = resolved.lastIndexOf("node_modules");
       if (nodeModulesIndex === -1) {
         return resolved;
       }
       // Get everything up to and including the package name (handles scoped packages too)
-      const afterNodeModules = resolved.slice(nodeModulesIndex + 'node_modules/'.length);
-      const packageName = afterNodeModules.startsWith('@') 
-        ? afterNodeModules.split('/').slice(0, 2).join('/')
-        : afterNodeModules.split('/')[0];
-      return resolved.slice(0, nodeModulesIndex + 'node_modules/'.length) + packageName;
+      const afterNodeModules = resolved.slice(
+        nodeModulesIndex + "node_modules/".length
+      );
+      const packageName = afterNodeModules.startsWith("@")
+        ? afterNodeModules.split("/").slice(0, 2).join("/")
+        : afterNodeModules.split("/")[0];
+      return (
+        resolved.slice(0, nodeModulesIndex + "node_modules/".length) +
+        packageName
+      );
     } catch {
       return dep; // Fall back to bare specifier if resolution fails
     }
   };
-  
+
   const server = await createServer({
     root: resolvedRoot,
     plugins: [
       // MDX plugin must come before React plugin
       {
-        enforce: 'pre',
+        enforce: "pre",
         ...mdx({
           remarkPlugins: [
-            remarkGfm, 
+            remarkGfm,
             remarkFrontmatter,
             remarkContainerDirectives,
             remarkMermaid,
           ],
           rehypePlugins: [rehypeSlug],
-          providerImportSource: '@mdx-js/react',
+          providerImportSource: "@mdx-js/react",
         }),
       },
       react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
@@ -481,10 +516,10 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
       dedupe: ["react", "react-dom", "@mdx-js/react", "mermaid"],
       alias: {
         // Resolve React and other deps from revitedocs's installation using Node resolution
-        'react': resolveDep('react'),
-        'react-dom': resolveDep('react-dom'),
-        '@mdx-js/react': resolveDep('@mdx-js/react'),
-        'mermaid': resolveDep('mermaid'),
+        react: resolveDep("react"),
+        "react-dom": resolveDep("react-dom"),
+        "@mdx-js/react": resolveDep("@mdx-js/react"),
+        mermaid: resolveDep("mermaid"),
       },
     },
   });
@@ -496,7 +531,9 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
   process.on("SIGINT", () => {
     try {
       fs.unlinkSync(indexPath);
-    } catch { /* ignore cleanup errors */ }
+    } catch {
+      /* ignore cleanup errors */
+    }
     process.exit();
   });
 }

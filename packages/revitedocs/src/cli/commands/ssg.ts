@@ -81,6 +81,9 @@ function writeCssEntry(revitedocsDir: string): string {
   const cssContent = `@import "tailwindcss";
 @source "./entry-client.js";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Prose styles for markdown content */
 .prose h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
 .prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
@@ -167,11 +170,25 @@ function getSidebarForPath(path, sidebarConfig) {
   return sidebarConfig['/'] || []
 }
 
+// Get initial theme from localStorage or system preference
+function getInitialTheme() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('revitedocs-theme')
+    if (stored === 'light' || stored === 'dark') {
+      return stored
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark'
+    }
+  }
+  return 'light'
+}
+
 // Simple router - render based on current path
 function App() {
   const path = window.location.pathname
   const [searchOpen, setSearchOpen] = useState(false)
-  const [theme, setTheme] = useState('light')
+  const [theme, setTheme] = useState(getInitialTheme)
   const [isMounted, setIsMounted] = useState(false)
   
   const currentVersion = detectVersion(path)
@@ -199,6 +216,7 @@ function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
+    localStorage.setItem('revitedocs-theme', theme)
   }, [theme])
   
   useEffect(() => {
@@ -723,6 +741,19 @@ function createHtmlPage(
     })
     .join("\n    ");
 
+  // Inline script to set theme before page renders (prevents FOUC)
+  const themeScript = `<script>
+(function() {
+  var theme = localStorage.getItem('revitedocs-theme');
+  if (!theme) {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+})();
+</script>`;
+
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -732,6 +763,7 @@ function createHtmlPage(
     <meta name="description" content="${description}">
     <link rel="canonical" href="${base}${route.path}">
     ${styleTags}
+    ${themeScript}
   </head>
   <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     <div id="app">${appHtml}</div>
