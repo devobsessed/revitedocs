@@ -1,6 +1,6 @@
 {
   "name": "revitedocs",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "A modern documentation generator powered by React and Vite with SSG support",
   "type": "module",
   "bin": {
@@ -28,7 +28,8 @@
   "files": [
     "bin",
     "dist",
-    "templates"
+    "templates",
+    "src/theme/globals.css"
   ],
   "scripts": {
     "build": "tsup",

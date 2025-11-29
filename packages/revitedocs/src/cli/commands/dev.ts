@@ -22,6 +22,9 @@ const findPackageRoot = () => {
   return __dirname
 }
 const packageRoot = findPackageRoot()
+
+// Check if we're in development mode (src exists) or production (only dist)
+const isDevMode = fs.existsSync(path.join(packageRoot, 'src/components/index.ts'))
 import rehypeSlug from 'rehype-slug'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
@@ -42,9 +45,50 @@ export interface DevOptions {
 }
 
 /**
+ * Write CSS entry file with proper @source paths for Tailwind v4
+ * This is written to the user's .revitedocs folder so Tailwind can process it correctly
+ */
+function writeCssEntry(docsRoot: string, componentsPath: string): string {
+  const revitedocsDir = path.join(docsRoot, '.revitedocs')
+  if (!fs.existsSync(revitedocsDir)) {
+    fs.mkdirSync(revitedocsDir, { recursive: true })
+  }
+
+  // Read the base globals.css from revitedocs package
+  const globalsCssPath = path.join(packageRoot, 'src/theme/globals.css')
+  let globalsCss = ''
+  if (fs.existsSync(globalsCssPath)) {
+    globalsCss = fs.readFileSync(globalsCssPath, 'utf-8')
+    // Remove the @import tailwindcss and @source lines - we'll add our own
+    globalsCss = globalsCss
+      .replace(/@import\s+["']tailwindcss["'];?/g, '')
+      .replace(/@source\s+["'][^"']+["'];?/g, '')
+      .trim()
+  }
+
+  const cssContent = `@import "tailwindcss";
+
+/* Scan the revitedocs components for Tailwind classes */
+@source "${componentsPath}";
+
+/* Scan user's docs folder for Tailwind classes */
+@source "../";
+
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+${globalsCss}
+`
+
+  const cssPath = path.join(revitedocsDir, 'styles.css')
+  fs.writeFileSync(cssPath, cssContent)
+  return cssPath
+}
+
+/**
  * Virtual entry point plugin - serves main.tsx
  */
-function revitedocsEntryPlugin(): Plugin {
+function revitedocsEntryPlugin(cssPath: string): Plugin {
   return {
     name: 'revitedocs:entry',
     configureServer(server) {
@@ -69,6 +113,7 @@ function revitedocsEntryPlugin(): Plugin {
     },
     load(id) {
       if (id === '\0revitedocs-entry') {
+        // Use the CSS file we wrote to .revitedocs/
         return `
 import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -77,8 +122,8 @@ import config from 'virtual:revitedocs/config'
 import { search } from 'virtual:revitedocs/search'
 import { DocsApp } from 'revitedocs/components'
 
-// Import ReviteDocs theme CSS
-import 'revitedocs/theme/globals.css'
+// Import the generated CSS with Tailwind
+import '${cssPath}'
 
 // Render the app
 const root = createRoot(document.getElementById('app'))
@@ -180,6 +225,14 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
   // Load config
   const config = await loadConfig(resolvedRoot)
 
+  // Determine the components path based on dev vs production mode
+  const componentsPath = isDevMode
+    ? path.join(packageRoot, 'src/components')
+    : path.join(packageRoot, 'dist/components')
+
+  // Write CSS entry file with proper @source paths
+  const cssPath = writeCssEntry(resolvedRoot, componentsPath)
+
   // Write index.html to docs folder
   const indexPath = path.join(resolvedRoot, 'index.html')
   const indexHtml = createIndexHtml(config.title)
@@ -223,7 +276,7 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
         }),
       },
       react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
-      revitedocsEntryPlugin(),
+      revitedocsEntryPlugin(cssPath),
       revitedocsConfigPlugin(config),
       revitedocsRoutesPlugin(resolvedRoot),
       revitedocsSearchPlugin(resolvedRoot),
@@ -244,9 +297,10 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
         'react-dom': resolveDep('react-dom'),
         '@mdx-js/react': resolveDep('@mdx-js/react'),
         mermaid: resolveDep('mermaid'),
-        // In dev mode, use SOURCE files instead of built dist for HMR
-        'revitedocs/components': path.join(packageRoot, 'src/components/index.ts'),
-        'revitedocs/theme/globals.css': path.join(packageRoot, 'src/theme/globals.css'),
+        // Use source files in dev mode (for HMR), or dist files in production
+        'revitedocs/components': isDevMode
+          ? path.join(packageRoot, 'src/components/index.ts')
+          : path.join(packageRoot, 'dist/components/index.js'),
       },
     },
   })
@@ -258,6 +312,7 @@ export async function dev(root: string, options: DevOptions): Promise<void> {
   process.on('SIGINT', () => {
     try {
       fs.unlinkSync(indexPath)
+      fs.unlinkSync(cssPath)
     } catch {
       /* ignore cleanup errors */
     }

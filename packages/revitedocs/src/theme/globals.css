@@ -7,9 +7,13 @@
 
 @import "tailwindcss";
 
-/* Tell Tailwind v4 where to find classes */
+/* Tell Tailwind v4 where to find classes in the revitedocs package components 
+   Path is relative to this CSS file location:
+   - In dev: src/theme/globals.css → ../components (src/components) 
+   - In prod: src/theme/globals.css → ../../dist/components (dist/components)
+   We include both to handle either case */
 @source "../components";
-@source "../../../docs";
+@source "../../dist/components";
 
 /* Enable class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
