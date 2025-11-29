@@ -452,7 +452,7 @@ function writeCssEntry(revitedocsDir: string): string {
   height: 3px;
   background: linear-gradient(90deg, transparent 0%, transparent 35%, rgba(80,80,80,0.8) 50%, transparent 65%, transparent 100%);
   background-size: 200% 100%;
-  animation: shimmer 2.5s linear infinite;
+  animation: shimmer 15s ease-in-out infinite;
 }
 
 .dark .header-beam::after,
