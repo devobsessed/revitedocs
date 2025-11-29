@@ -1,7 +1,7 @@
 {
   "name": "revitedocs",
   "version": "0.0.1",
-  "description": "A VitePress-style documentation generator with React Router 7 SSG",
+  "description": "A modern documentation generator powered by React and Vite with SSG support",
   "type": "module",
   "bin": {
     "revitedocs": "./bin/revitedocs.js"
@@ -36,7 +36,9 @@
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "release": "npm publish --access public",
+    "release:dry": "npm publish --access public --dry-run"
   },
   "keywords": [
     "documentation",
@@ -46,7 +48,7 @@
     "ssg",
     "docs"
   ],
-  "author": "",
+  "author": "Brad Risse",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
