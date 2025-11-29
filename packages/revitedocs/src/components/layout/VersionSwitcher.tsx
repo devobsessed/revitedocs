@@ -1,5 +1,12 @@
-import { createElement, useState, useRef, useEffect } from 'react'
 import { ChevronDown, Check, AlertTriangle } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu.js'
+import { Button } from '../ui/button.js'
+import { Badge } from '../ui/badge.js'
 import { cn } from '../utils.js'
 
 export interface VersionSwitcherProps {
@@ -36,7 +43,8 @@ export function addVersionToPath(path: string, version: string): string {
 
 /**
  * Version switcher dropdown component
- * Allows users to switch between documentation versions while staying on the same page
+ * Allows users to switch between documentation versions while staying on the same page.
+ * Uses shadcn/ui DropdownMenu for polished appearance.
  */
 export function VersionSwitcher({
   versions,
@@ -45,31 +53,6 @@ export function VersionSwitcher({
   currentPath,
   className,
 }: VersionSwitcherProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Close on escape key
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setIsOpen(false)
-      }
-    }
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [])
-
   if (!versions || versions.length === 0) {
     return null
   }
@@ -92,90 +75,69 @@ export function VersionSwitcher({
     return addVersionToPath(basePath, targetVersion)
   }
 
-  return createElement('div', {
-    className: cn('space-y-2', className),
-  },
-    // Dropdown container (relative for positioning the menu)
-    createElement('div', {
-      ref: dropdownRef,
-      className: 'relative',
-    },
-      // Version selector button
-      createElement('button', {
-        onClick: () => setIsOpen(!isOpen),
-        className: cn(
-          'flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium',
-          'border transition-colors',
-          isOldVersion
-            ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/50'
-            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-        ),
-        'aria-expanded': isOpen,
-        'aria-haspopup': 'listbox',
-      },
-        isOldVersion && createElement(AlertTriangle, { className: 'h-3.5 w-3.5' }),
-        createElement('span', null, displayVersion),
-        createElement(ChevronDown, {
-          className: cn('h-4 w-4 transition-transform', isOpen && 'rotate-180'),
-        })
-      ),
-
-      // Dropdown menu (absolutely positioned within relative container)
-      isOpen && createElement('div', {
-        className: cn(
-          'absolute top-full left-0 z-50 mt-1 min-w-[120px] rounded-md border shadow-lg',
-          'bg-white dark:bg-gray-800 dark:border-gray-700'
-        ),
-        role: 'listbox',
-      },
-        createElement('div', { className: 'py-1' },
-          versions.map((version, index) => {
+  return (
+    <div className={cn('space-y-2', className)}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn(
+              'gap-1.5',
+              isOldVersion &&
+                'border-yellow-500/50 bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 dark:text-yellow-400'
+            )}
+          >
+            {isOldVersion && <AlertTriangle className="h-3.5 w-3.5" />}
+            <span>{displayVersion}</span>
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="min-w-[120px]">
+          {versions.map((version, index) => {
             const isSelected = version === displayVersion
             const isVersionLatest = index === 0
 
-            return createElement('a', {
-              key: version,
-              href: getVersionUrl(version),
-              role: 'option',
-              'aria-selected': isSelected,
-              className: cn(
-                'flex items-center justify-between px-3 py-2 text-sm',
-                'hover:bg-gray-100 dark:hover:bg-gray-700',
-                isSelected
-                  ? 'text-blue-600 dark:text-blue-400 font-medium'
-                  : 'text-gray-700 dark:text-gray-300'
-              ),
-              onClick: () => setIsOpen(false),
-            },
-              createElement('span', { className: 'flex items-center gap-2' },
-                version,
-                isVersionLatest && createElement('span', {
-                  className: 'text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-                }, 'latest')
-              ),
-              isSelected && createElement(Check, { className: 'h-4 w-4' })
+            return (
+              <DropdownMenuItem key={version} asChild>
+                <a
+                  href={getVersionUrl(version)}
+                  className={cn(
+                    'flex items-center justify-between',
+                    isSelected && 'text-primary font-medium'
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    {version}
+                    {isVersionLatest && (
+                      <Badge variant="success" className="text-[10px] px-1 py-0">
+                        latest
+                      </Badge>
+                    )}
+                  </span>
+                  {isSelected && <Check className="h-4 w-4" />}
+                </a>
+              </DropdownMenuItem>
             )
-          })
-        )
-      )
-    ),
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-    // Old version warning banner (normal flow, not absolute)
-    isOldVersion && !isOpen && createElement('div', {
-      className: cn(
-        'p-2 rounded-md text-xs',
-        'bg-amber-50 border border-amber-200 text-amber-800',
-        'dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300'
-      ),
-    },
-      'You\'re viewing docs for ',
-      createElement('strong', null, currentVersion),
-      '. ',
-      createElement('a', {
-        href: getVersionUrl(versions[0]),
-        className: 'underline hover:no-underline',
-      }, 'View latest →')
-    )
+      {/* Old version warning banner */}
+      {isOldVersion && (
+        <div
+          className={cn(
+            'p-2 rounded-md text-xs',
+            'bg-yellow-500/10 border border-yellow-500/30 text-yellow-700',
+            'dark:text-yellow-400'
+          )}
+        >
+          You're viewing docs for <strong>{currentVersion}</strong>.{' '}
+          <a href={getVersionUrl(versions[0])} className="underline hover:no-underline">
+            View latest →
+          </a>
+        </div>
+      )}
+    </div>
   )
 }
-

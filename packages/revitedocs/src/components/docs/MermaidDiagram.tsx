@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect, useState, useRef, useId, useCallback } from 'react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Maximize2, ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react'

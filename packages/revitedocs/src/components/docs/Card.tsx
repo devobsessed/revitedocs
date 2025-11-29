@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
+import {
+  Card as ShadcnCard,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '../ui/card.js'
 import { cn } from '../utils.js'
 
 export interface CardProps {
@@ -18,7 +25,8 @@ export interface CardProps {
 }
 
 /**
- * Card component for navigation links or content highlights
+ * Card component for navigation links or content highlights.
+ * Uses shadcn/ui Card under the hood.
  */
 export function Card({
   title,
@@ -28,25 +36,33 @@ export function Card({
   className,
   children,
 }: CardProps) {
-  const content = (
-    <>
-      {/* Icon */}
-      {icon && (
-        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
-          {icon}
-        </div>
+  const cardContent = (
+    <ShadcnCard
+      className={cn(
+        'group relative transition-all',
+        href && 'hover:border-primary/50 hover:shadow-md cursor-pointer',
+        className
       )}
-
-      {/* Title */}
-      <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-blue-500 transition-colors">
-        {title}
-      </h3>
+    >
+      <CardHeader className="pb-2">
+        {/* Icon */}
+        {icon && (
+          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            {icon}
+          </div>
+        )}
+        <CardTitle className="text-base group-hover:text-primary transition-colors">
+          {title}
+        </CardTitle>
+      </CardHeader>
 
       {/* Description or children */}
       {(description || children) && (
-        <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          {children || description}
-        </div>
+        <CardContent className="pt-0">
+          <CardDescription className="text-sm leading-relaxed">
+            {children || description}
+          </CardDescription>
+        </CardContent>
       )}
 
       {/* Arrow indicator for links */}
@@ -54,32 +70,24 @@ export function Card({
         <ArrowRight
           className={cn(
             'absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5',
-            'text-zinc-400 group-hover:text-blue-500 group-hover:translate-x-1',
+            'text-muted-foreground group-hover:text-primary group-hover:translate-x-1',
             'transition-all opacity-0 group-hover:opacity-100'
           )}
           aria-hidden="true"
         />
       )}
-    </>
-  )
-
-  const cardClasses = cn(
-    'group relative block p-5 rounded-xl border',
-    'border-zinc-200 dark:border-zinc-700',
-    'bg-white dark:bg-zinc-800/50',
-    href && 'hover:border-blue-500/50 hover:shadow-md transition-all cursor-pointer',
-    className
+    </ShadcnCard>
   )
 
   if (href) {
     return (
-      <a href={href} className={cardClasses}>
-        {content}
+      <a href={href} className="block no-underline">
+        {cardContent}
       </a>
     )
   }
 
-  return <div className={cardClasses}>{content}</div>
+  return cardContent
 }
 
 export interface CardGroupProps {
@@ -108,4 +116,3 @@ export function CardGroup({ cols = 2, children, className }: CardGroupProps) {
     </div>
   )
 }
-

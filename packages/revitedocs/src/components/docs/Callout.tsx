@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Info, AlertTriangle, Lightbulb, Flame } from 'lucide-react'
+import { Info, AlertTriangle, Lightbulb, Flame, AlertCircle } from 'lucide-react'
 import { cn } from '../utils.js'
 
 export type CalloutVariant = 'info' | 'warning' | 'tip' | 'danger' | 'note'
@@ -27,37 +27,37 @@ const variantConfig: Record<
 > = {
   info: {
     icon: Info,
-    containerClass: 'border-blue-500/30 bg-blue-500/5 dark:bg-blue-500/10',
+    containerClass: 'border-blue-500/50 bg-blue-500/5 dark:bg-blue-500/10',
     iconClass: 'text-blue-500',
-    titleClass: 'text-blue-600 dark:text-blue-400',
-    defaultTitle: 'Note',
+    titleClass: 'text-blue-700 dark:text-blue-400',
+    defaultTitle: 'Info',
   },
   note: {
-    icon: Info,
-    containerClass: 'border-zinc-500/30 bg-zinc-500/5 dark:bg-zinc-500/10',
-    iconClass: 'text-zinc-500',
-    titleClass: 'text-zinc-600 dark:text-zinc-400',
+    icon: AlertCircle,
+    containerClass: 'border-border bg-muted/50',
+    iconClass: 'text-muted-foreground',
+    titleClass: 'text-foreground',
     defaultTitle: 'Note',
   },
   warning: {
     icon: AlertTriangle,
-    containerClass: 'border-yellow-500/30 bg-yellow-500/5 dark:bg-yellow-500/10',
+    containerClass: 'border-yellow-500/50 bg-yellow-500/5 dark:bg-yellow-500/10',
     iconClass: 'text-yellow-500',
-    titleClass: 'text-yellow-600 dark:text-yellow-400',
+    titleClass: 'text-yellow-700 dark:text-yellow-400',
     defaultTitle: 'Warning',
   },
   tip: {
     icon: Lightbulb,
-    containerClass: 'border-green-500/30 bg-green-500/5 dark:bg-green-500/10',
+    containerClass: 'border-green-500/50 bg-green-500/5 dark:bg-green-500/10',
     iconClass: 'text-green-500',
-    titleClass: 'text-green-600 dark:text-green-400',
+    titleClass: 'text-green-700 dark:text-green-400',
     defaultTitle: 'Tip',
   },
   danger: {
     icon: Flame,
-    containerClass: 'border-red-500/30 bg-red-500/5 dark:bg-red-500/10',
+    containerClass: 'border-red-500/50 bg-red-500/5 dark:bg-red-500/10',
     iconClass: 'text-red-500',
-    titleClass: 'text-red-600 dark:text-red-400',
+    titleClass: 'text-red-700 dark:text-red-400',
     defaultTitle: 'Danger',
   },
 }
@@ -79,7 +79,7 @@ export function Callout({
   return (
     <div
       className={cn(
-        'not-prose my-6 rounded-lg border-l-4 p-4',
+        'not-prose my-6 rounded-lg border p-4',
         config.containerClass,
         className
       )}
@@ -103,4 +103,3 @@ export function Callout({
     </div>
   )
 }
-

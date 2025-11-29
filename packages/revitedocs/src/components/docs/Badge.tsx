@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
+import { Badge as ShadcnBadge, type BadgeProps as ShadcnBadgeProps } from '../ui/badge.js'
 import { cn } from '../utils.js'
 
+// Legacy variant types for backward compatibility
 export type BadgeVariant =
   | 'default'
   | 'primary'
@@ -19,31 +21,29 @@ export interface BadgeProps {
   className?: string
 }
 
-const variantClasses: Record<BadgeVariant, string> = {
-  default: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
-  primary: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-  secondary: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-  success: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  warning: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-  danger: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-  info: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
+// Map legacy variants to shadcn variants
+const variantMap: Record<BadgeVariant, ShadcnBadgeProps['variant']> = {
+  default: 'secondary',
+  primary: 'default',
+  secondary: 'secondary',
+  success: 'success',
+  warning: 'warning',
+  danger: 'danger',
+  info: 'info',
 }
 
 /**
  * Badge component for status indicators, version tags, labels, etc.
+ * Uses shadcn/ui Badge under the hood.
  */
 export function Badge({ variant = 'default', children, className }: BadgeProps) {
   return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5',
-        'text-xs font-semibold',
-        variantClasses[variant],
-        className
-      )}
+    <ShadcnBadge
+      variant={variantMap[variant]}
+      className={cn('rounded-full', className)}
     >
       {children}
-    </span>
+    </ShadcnBadge>
   )
 }
 
@@ -105,4 +105,3 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     </Badge>
   )
 }
-

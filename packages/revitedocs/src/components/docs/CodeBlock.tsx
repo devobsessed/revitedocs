@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useCallback, type ReactNode } from 'react'
 import { Check, Copy, FileCode } from 'lucide-react'
 import { cn } from '../utils.js'

@@ -110,9 +110,9 @@ function TreeNode({ item, depth }: TreeNodeProps) {
         {/* Icon */}
         {isFolder ? (
           expanded ? (
-            <FolderOpen className="h-4 w-4 text-blue-500 flex-shrink-0" aria-hidden="true" />
+            <FolderOpen className="h-4 w-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0" aria-hidden="true" />
           ) : (
-            <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" aria-hidden="true" />
+            <Folder className="h-4 w-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0" aria-hidden="true" />
           )
         ) : (
           <File className="h-4 w-4 text-zinc-400 flex-shrink-0" aria-hidden="true" />

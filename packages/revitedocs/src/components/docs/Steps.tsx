@@ -22,7 +22,7 @@ export function Step({ number, title, children, className }: StepProps) {
       <div
         className={cn(
           'absolute left-0 top-0 flex h-7 w-7 items-center justify-center',
-          'rounded-full bg-blue-500 text-sm font-semibold text-white',
+          'rounded-full bg-zinc-900 dark:bg-zinc-100 text-sm font-semibold text-white dark:text-zinc-900',
           'ring-4 ring-white dark:ring-zinc-900'
         )}
         aria-hidden="true"

@@ -1,13 +1,18 @@
 import type { SearchResult } from './types.js'
 
-// Search function type
-type SearchFn = (query: string, options?: { maxResults?: number }) => Array<{
+// Search result item type
+type SearchResultItem = {
   id: string
   title: string
   description: string
   url: string
   score: number
-}>
+}
+
+// Search function type - can be sync or async
+type SearchFn = (query: string, options?: { maxResults?: number }) => 
+  | SearchResultItem[]
+  | Promise<SearchResultItem[]>
 
 /** Search function - set via setSearchFunction */
 let searchFn: SearchFn | null = null
@@ -55,7 +60,12 @@ export async function searchDocs(
   }
 
   try {
-    const results = searchFn(query)
+    // Handle both sync and async search functions
+    const resultsOrPromise = searchFn(query)
+    const results = Array.isArray(resultsOrPromise) 
+      ? resultsOrPromise 
+      : await resultsOrPromise
+    
     return results.slice(0, maxResults).map(result => ({
       id: result.id,
       title: result.title,

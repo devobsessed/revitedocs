@@ -18,7 +18,7 @@ export interface PageWrapperProps {
  */
 export function PageWrapper({ children, frontmatter, rawMarkdown, className }: PageWrapperProps) {
   return createElement('article', {
-    className: cn('prose prose-gray dark:prose-invert max-w-none', className),
+    className: cn('prose prose-zinc dark:prose-invert max-w-none', className),
   },
     // Page header with title and copy button
     (frontmatter?.title || rawMarkdown) && createElement('div', {
@@ -27,7 +27,7 @@ export function PageWrapper({ children, frontmatter, rawMarkdown, className }: P
       // Title
       frontmatter?.title 
         ? createElement('h1', {
-            className: 'text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100',
+            className: 'text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100',
           }, frontmatter.title)
         : createElement('div'), // Spacer if no title
       
@@ -40,7 +40,7 @@ export function PageWrapper({ children, frontmatter, rawMarkdown, className }: P
 
     // Page description from frontmatter
     frontmatter?.description && createElement('p', {
-      className: 'text-lg text-gray-600 dark:text-gray-400 mb-8',
+      className: 'text-lg text-zinc-600 dark:text-zinc-400 mb-8',
     }, frontmatter.description),
 
     // Main content

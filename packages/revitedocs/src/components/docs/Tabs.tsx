@@ -1,113 +1,90 @@
-'use client'
-
-import { useState, type ReactNode } from 'react'
-import { cn } from '../utils.js'
+import { useEffect, useState, type ReactNode } from "react";
+import { cn } from "../utils.js";
 
 export interface TabItem {
   /** Tab label shown in tab button */
-  label: string
+  label: string;
   /** Tab content */
-  content: ReactNode
+  content: ReactNode;
 }
 
 export interface TabsProps {
   /** Array of tab items */
-  items: TabItem[]
+  items: TabItem[];
   /** Default active tab index */
-  defaultIndex?: number
+  defaultIndex?: number;
   /** Additional CSS classes */
-  className?: string
+  className?: string;
 }
 
 /**
  * Tabs component for displaying tabbed content.
- * Supports keyboard navigation (arrow keys, Home, End).
+ * SSR-compatible with fallback to showing first tab only.
  */
 export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
-  const [activeIndex, setActiveIndex] = useState(defaultIndex)
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  const [isMounted, setIsMounted] = useState(false);
 
-  if (items.length === 0) return null
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
-    let newIndex = index
+  if (items.length === 0) return null;
 
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault()
-        newIndex = index === 0 ? items.length - 1 : index - 1
-        break
-      case 'ArrowRight':
-        e.preventDefault()
-        newIndex = index === items.length - 1 ? 0 : index + 1
-        break
-      case 'Home':
-        e.preventDefault()
-        newIndex = 0
-        break
-      case 'End':
-        e.preventDefault()
-        newIndex = items.length - 1
-        break
-      default:
-        return
-    }
-
-    setActiveIndex(newIndex)
-    // Focus the new tab button
-    const tabList = e.currentTarget.parentElement
-    const buttons = tabList?.querySelectorAll('[role="tab"]')
-    const button = buttons?.[newIndex] as HTMLButtonElement
-    button?.focus()
+  // SSR fallback: show all content as static content
+  if (!isMounted) {
+    return (
+      <div className={cn("not-prose my-6", className)}>
+        <div className="w-full border-b border-border">
+          <div className="flex">
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "px-4 py-2 text-sm font-medium border-b-2",
+                  index === defaultIndex
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground"
+                )}
+              >
+                {item.label}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="p-4">{items[defaultIndex]?.content}</div>
+      </div>
+    );
   }
 
+  // Client-side interactive tabs
   return (
-    <div className={cn('not-prose my-6', className)}>
-      {/* Tab list */}
-      <div
-        role="tablist"
-        aria-label="Content tabs"
-        className="flex border-b border-zinc-200 dark:border-zinc-700"
-      >
-        {items.map((item, index) => (
-          <button
-            key={index}
-            role="tab"
-            type="button"
-            id={`tab-${index}`}
-            aria-selected={index === activeIndex}
-            aria-controls={`panel-${index}`}
-            tabIndex={index === activeIndex ? 0 : -1}
-            onClick={() => setActiveIndex(index)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-            className={cn(
-              'px-4 py-2 text-sm font-medium transition-colors',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
-              index === activeIndex
-                ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
-            )}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab panels */}
-      {items.map((item, index) => (
-        <div
-          key={index}
-          role="tabpanel"
-          id={`panel-${index}`}
-          aria-labelledby={`tab-${index}`}
-          hidden={index !== activeIndex}
-          tabIndex={0}
-          className="p-4 focus:outline-none"
-        >
-          {item.content}
+    <div className={cn("not-prose my-6", className)}>
+      <div className="w-full border-b border-border">
+        <div className="flex" role="tablist">
+          {items.map((item, index) => (
+            <button
+              key={index}
+              role="tab"
+              aria-selected={index === activeIndex}
+              onClick={() => setActiveIndex(index)}
+              className={cn(
+                "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                index === activeIndex
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
-      ))}
+      </div>
+      <div className="p-4" role="tabpanel">
+        {items[activeIndex]?.content}
+      </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -115,20 +92,19 @@ export function Tabs({ items, defaultIndex = 0, className }: TabsProps) {
  */
 export interface TabGroupProps {
   /** Tab labels array */
-  labels: string[]
+  labels: string[];
   /** Children must be the same count as labels */
-  children: ReactNode[]
+  children: ReactNode[];
   /** Additional CSS classes */
-  className?: string
+  className?: string;
 }
 
 export function TabGroup({ labels, children, className }: TabGroupProps) {
-  const childArray = Array.isArray(children) ? children : [children]
+  const childArray = Array.isArray(children) ? children : [children];
   const items: TabItem[] = labels.map((label, i) => ({
     label,
     content: childArray[i] || null,
-  }))
+  }));
 
-  return <Tabs items={items} className={className} />
+  return <Tabs items={items} className={className} />;
 }
-

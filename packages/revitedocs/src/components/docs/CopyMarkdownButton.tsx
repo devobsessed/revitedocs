@@ -1,35 +1,7 @@
-import { createElement, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
+import { Copy, Check } from 'lucide-react'
+import { Button } from '../ui/button.js'
 import { cn } from '../utils.js'
-
-// Icons as SVG elements
-const CopyIcon = () => createElement('svg', {
-  xmlns: 'http://www.w3.org/2000/svg',
-  width: 16,
-  height: 16,
-  viewBox: '0 0 24 24',
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 2,
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
-},
-  createElement('rect', { width: 14, height: 14, x: 8, y: 8, rx: 2, ry: 2 }),
-  createElement('path', { d: 'M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2' })
-)
-
-const CheckIcon = () => createElement('svg', {
-  xmlns: 'http://www.w3.org/2000/svg',
-  width: 16,
-  height: 16,
-  viewBox: '0 0 24 24',
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 2,
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
-},
-  createElement('polyline', { points: '20 6 9 17 4 12' })
-)
 
 export interface CopyMarkdownButtonProps {
   /** Raw markdown content to copy */
@@ -44,10 +16,11 @@ export interface CopyMarkdownButtonProps {
 
 /**
  * Button component to copy raw markdown content to clipboard
- * Useful for feeding documentation to AI tools
+ * Useful for feeding documentation to AI tools.
+ * Uses shadcn/ui Button under the hood.
  */
-export function CopyMarkdownButton({ 
-  markdown, 
+export function CopyMarkdownButton({
+  markdown,
   className,
   label = 'Copy Markdown',
   compact = false,
@@ -64,23 +37,25 @@ export function CopyMarkdownButton({
     }
   }, [markdown])
 
-  return createElement('button', {
-    onClick: handleCopy,
-    className: cn(
-      'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md',
-      'text-gray-600 dark:text-gray-400',
-      'bg-gray-100 dark:bg-gray-800',
-      'hover:bg-gray-200 dark:hover:bg-gray-700',
-      'border border-gray-200 dark:border-gray-700',
-      'transition-colors duration-150',
-      copied && 'text-green-600 dark:text-green-400',
-      className
-    ),
-    title: copied ? 'Copied!' : label,
-    'aria-label': label,
-  },
-    copied ? createElement(CheckIcon) : createElement(CopyIcon),
-    !compact && createElement('span', null, copied ? 'Copied!' : label)
+  return (
+    <Button
+      variant="outline"
+      size={compact ? 'icon-sm' : 'sm'}
+      onClick={handleCopy}
+      className={cn(
+        'gap-1.5',
+        copied && 'text-green-600 dark:text-green-400',
+        className
+      )}
+      title={copied ? 'Copied!' : label}
+      aria-label={label}
+    >
+      {copied ? (
+        <Check className="h-4 w-4" />
+      ) : (
+        <Copy className="h-4 w-4" />
+      )}
+      {!compact && <span>{copied ? 'Copied!' : label}</span>}
+    </Button>
   )
 }
-

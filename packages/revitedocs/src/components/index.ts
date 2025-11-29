@@ -59,5 +59,18 @@ export {
   type UsePagefindReturn,
 } from './search/index.js'
 
+// App component
+export {
+  DocsApp,
+  DocsAppSSR,
+  type DocsAppProps,
+  type DocsConfig,
+  type RouteInfo,
+  type SearchFn,
+} from './app/index.js'
+
+// shadcn/ui primitives
+export * from './ui/index.js'
+
 // Utilities
 export { cn } from './utils.js'
