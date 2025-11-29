@@ -429,6 +429,10 @@ function writeCssEntry(revitedocsDir: string): string {
 .prose a:hover { text-decoration: underline; }
 .prose strong { font-weight: 600; }
 .prose blockquote { border-left: 4px solid hsl(var(--primary)); padding-left: 1rem; color: hsl(var(--muted-foreground)); margin: 1rem 0; }
+.prose table, article table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
+.prose th, .prose td, article th, article td { border: 1px solid hsl(var(--border)); padding: 0.5rem 0.75rem; text-align: left; }
+.prose th, article th { background: hsl(var(--muted)); font-weight: 600; }
+.prose tbody tr:nth-child(even), article tbody tr:nth-child(even) { background: hsl(var(--muted) / 0.3); }
 `;
   const cssPath = path.join(revitedocsDir, "styles.css");
   fs.writeFileSync(cssPath, cssContent);

@@ -34,6 +34,13 @@
       .prose a:hover { text-decoration: underline; }
       .prose strong { font-weight: 600; }
       .prose blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; color: #6b7280; margin: 1rem 0; }
+      .prose table, article table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
+      .prose th, .prose td, article th, article td { border: 1px solid #e5e7eb; padding: 0.5rem 0.75rem; text-align: left; }
+      .dark .prose th, .dark .prose td, .dark article th, .dark article td { border-color: #374151; }
+      .prose th, article th { background: #f3f4f6; font-weight: 600; }
+      .dark .prose th, .dark article th { background: #1f2937; }
+      .prose tbody tr:nth-child(even), article tbody tr:nth-child(even) { background: rgba(243,244,246,0.5); }
+      .dark .prose tbody tr:nth-child(even), .dark article tbody tr:nth-child(even) { background: rgba(31,41,55,0.5); }
     </style>
   </head>
   <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">

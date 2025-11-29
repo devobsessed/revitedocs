@@ -269,6 +269,35 @@ code, pre, kbd, samp {
   margin: 1rem 0; 
 }
 
+/* Table styling */
+article table,
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+article th,
+article td,
+.prose th,
+.prose td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+article th,
+.prose th {
+  background: hsl(var(--muted));
+  font-weight: 600;
+}
+
+article tbody tr:nth-child(even),
+.prose tbody tr:nth-child(even) {
+  background: hsl(var(--muted) / 0.3);
+}
+
 /* Dark mode prose adjustments */
 .dark .prose pre { 
   background: hsl(var(--muted)); 
